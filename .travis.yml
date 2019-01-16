@@ -8,8 +8,8 @@ matrix:
     env: BUILD_SDIST=true
 install:
 - pip install -r requirements.txt
-- pip install mock --user
-- pip install future --user
+- pip install mock 
+- pip install future 
 script:
 - python test/__init__.py
 before_deploy: echo $TRAVIS_TAG | sed 's/^.//' > version.txt
