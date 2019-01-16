@@ -1,4 +1,4 @@
-[![QCI徽章](http://qci.oa.com/rest-api/pipeline/2090/build/shield)](http://qci.oa.com/#/pipeline/2090/totalresult/current)
+
 ## QT4W
 
 QT4W (Quick Test for Web) is a QTA test automation driver for Web.
