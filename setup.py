@@ -68,7 +68,7 @@ if __name__ == "__main__":
     setup(
         zip_safe=False,
         version=generate_version(),
-        name="qt4a",
+        name="qt4w",
         cmdclass={},
         packages=find_packages(exclude=("test", "test.*",)),
         include_package_data=True,
