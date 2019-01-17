@@ -14,7 +14,7 @@ script:
 - python test/__init__.py
 before_deploy: 
 - echo $TRAVIS_TAG | sed 's/^.//' > version.txt
-- ll -s
+- sudo ls
 deploy:
   skip_cleanup: true
   provider: pypi
