@@ -12,7 +12,9 @@ install:
 - pip install future 
 script:
 - python test/__init__.py
-before_deploy: echo $TRAVIS_TAG | sed 's/^.//' > version.txt
+before_deploy: 
+- echo $TRAVIS_TAG | sed 's/^.//' > version.txt
+- ll -s
 deploy:
   skip_cleanup: true
   provider: pypi
