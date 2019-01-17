@@ -24,6 +24,11 @@ WebDriver is the driver layer of web automation. This module is mainly used to h
 ### WebControl
 The WebControl module defines the WebElement and WebPage interfaces and provides implementations. In addition, QT4W also encapsulates other common web elements that are used to encapsulate pages for web automation.Webelement and WebPage usage refer to usage documentation。
 
+### Usage scenarios and installation
+QT4W can be used for web applications or embedded page automation, which cannot be used independently and needs to be used in conjunction with other native layer automation frameworks:
+* Android:  use and installation, please refer to [QT4A Document](https://qt4a.readthedocs.io/zh_CN/latest/web_test.html).
+* iOS: use and install, please refer to QT4i document
+* Windows: use and install, please refer to QT4C document
 ### links
 * [Usage Document](https://qt4w.readthedocs.io/zh_CN/latest/index.html)
 * [Design Document](https://github.com/qtacore/QT4W/blob/master/design.md)
@@ -45,6 +50,12 @@ WebDriver是web自动化中驱动层的封装，该模块主要用来处理Dom�
 
 ### WebControl
 WebControl模块定义WebElement以及WebPage的接口，并且给出了相关实现。此外，QT4W还封装了其他的常用Web元素，使用该模块来封装Web自动化时的页面。
+
+###使用场景及安装
+QT4W可用于各个端上的Web应用或者Native应用内嵌Web页面的自动化，其不能独立使用以及需要结合其他Native层的自动化框架一起使用：
+* Android端的使用及安装，请参考[QT4A文档](https://qt4a.readthedocs.io/zh_CN/latest/web_test.html)
+* iOS端的使用及安装，请参考QT4i文档
+* Windows端的使用及安装，请参考QT4C文档
 
 ### 链接
 
