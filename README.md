@@ -1,6 +1,10 @@
 
 ## QT4W
 
+[![Build Status](https://travis-ci.org/qtacore/QT4W.svg?branch=master)](https://travis-ci.org/qtacore/QT4W)
+[![PyPi version](https://img.shields.io/pypi/v/qt4w.svg)](https://pypi.python.org/pypi/qt4w/) 
+[![GitHub tag](https://img.shields.io/github/tag/qtacore/qt4w.svg)](https://GitHub.com/qtacore/qt4w/tags/)
+
 QT4W (Quick Test for Web) is a QTA test automation driver for Web.
 
 ### Features
@@ -50,4 +54,10 @@ WebControl模块定义WebElement以及WebPage的接口，并且给出了相关�
 
   [1]: https://github.com/Tencent/QT4A
   [2]: https://github.com/Tencent/QT4i
+  
+ ------------------------------
+
+欢迎加入QQ群（432699528）交流使用和反馈
+
+![image](https://github.com/Tencent/QTAF/blob/master/docs/misc/qq_group.png)
  
