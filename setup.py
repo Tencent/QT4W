@@ -80,6 +80,9 @@ if __name__ == "__main__":
         install_requires=parse_requirements(),  
         classifiers=[
           "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
           "Operating System :: OS Independent",
         ],
         url="https://github.com/qtacore/QT4W",
