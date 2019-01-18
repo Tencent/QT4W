@@ -8,12 +8,9 @@ matrix:
     env: BUILD_SDIST=true
   - os: linux
     sudo: true
-    python: '3.6'
-    language: generic
-  - os: linux
-    sudo: true
     python: '3.7'
-    language: generic  
+    language: generic 
+    env: EXTRA_TESTS=true
 install:
 - pip install -r requirements.txt
 - pip install mock 
