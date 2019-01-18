@@ -12,9 +12,9 @@ matrix:
     language: generic 
     env: ISOLATED=true
 install:
-- pip install -r requirements.txt
-- pip install mock 
-- pip install future 
+- pip install -r requirements.txt --user
+- pip install mock  --user
+- pip install future --user
 script:
 - python test/__init__.py
 before_deploy: 
