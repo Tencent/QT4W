@@ -36,7 +36,7 @@ QT4W can be used for web applications or embedded page automation, which cannot 
  QT4W(Quick Test for Web)是QTA测试体系中的一环，主要用于Web自动化测试。
 ### 支持多种平台的Web自动化
 * Android平台：支持基于webkit，X5等内核Web自动化测试（和[QT4A][1]一起使用)。
-* IOS平台：支持IOS应用的内嵌页面及浏览器应用的Web自动化测试（和[QT4I][2]一起使用。
+* IOS平台：支持IOS应用的内嵌页面及浏览器应用的Web自动化测试（和[QT4I][2]一起使用)。
 * Windows平台：支持基于Chrome，IE内核的Web自动化测试（和QT4C一起使用），目前QT4C正在开源流程中。
 
 QT4W是QTA测试体系中Web自动化测试的基础， 包含三个模块：WebView、webDriver以及WebControl模块。 
