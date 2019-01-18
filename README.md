@@ -2,6 +2,7 @@
 ## QT4W
 
 [![Build Status](https://travis-ci.org/qtacore/QT4W.svg?branch=master)](https://travis-ci.org/qtacore/QT4W)
+[![Documentation Status](https://readthedocs.org/projects/qt4w/badge/?version=latest)](https://qt4w.readthedocs.io/zh_CN/latest/?badge=latest)
 [![PyPi version](https://img.shields.io/pypi/v/qt4w.svg)](https://pypi.python.org/pypi/qt4w/) 
 [![GitHub tag](https://img.shields.io/github/tag/qtacore/qt4w.svg)](https://GitHub.com/qtacore/qt4w/tags/)
 
