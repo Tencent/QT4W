@@ -10,9 +10,10 @@ matrix:
     sudo: true
     python: '3.7'
     language: generic 
-    env: ISOLATED=true
+    env: ISOLATED=false
 install:
 - which python
+- python --version
 - which pip
 - echo $PATH
 - python -c "import sys;print(sys.path)"
