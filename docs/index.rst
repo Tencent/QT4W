@@ -11,6 +11,7 @@ QT4W文档
    
    
    intro.md
+   install.md
    usage.md
    usebrowser.md
    extend.md
