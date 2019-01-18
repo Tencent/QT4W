@@ -128,7 +128,7 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 html_context = {
-    "display_github": True, # Integrate GitHub
+    "display_github": False, # Integrate GitHub
     "github_user": "MyUserName", # Username
     "github_repo": "MyDoc", # Repo name
     "github_version": "master", # Version
