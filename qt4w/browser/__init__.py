@@ -14,4 +14,5 @@
 #
 '''IBrowser接口定义及Windows实现
 '''
-from browser import IBrowser, Browser 
+from __future__ import absolute_import
+from qt4w.browser.browser import IBrowser, Browser
