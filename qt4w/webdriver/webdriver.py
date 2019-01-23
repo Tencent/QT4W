@@ -566,10 +566,9 @@ class WebDriverBase(IWebDriver):
             value = self._my_encode(value)
             value = '\'' + value + '\''
         js = '''
-            qt4w_driver_lib.node = qt4w_driver_lib.selectNodes('%s')[0];
-            if(qt4w_driver_lib.node == undefined) throw('find %s failed');
-            qt4w_driver_lib.result = (qt4w_driver_lib.node.%s = %s);
-        ''' % (elem_xpath, elem_xpath, prop_name, value)
+            var node = qt4w_driver_lib.selectNode('%s');
+            node.%s = %s;
+        ''' % (elem_xpath, prop_name, value)
         return self.eval_script(frame_xpaths, js)
     
     def get_style(self, elem_xpaths, style_name):
