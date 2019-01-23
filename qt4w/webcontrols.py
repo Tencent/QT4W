@@ -778,6 +778,7 @@ class WebElement(ControlContainer, IWebElement):
         '''高亮
         '''
         self._webdriver.highlight(self._locators)
+        time.sleep(0.5) # wait for highlight
         
     def scroll(self, x, y):
         '''滚动元素
@@ -1296,7 +1297,7 @@ class SelectElement(WebElement):
         if isinstance(option, (str, six.text_type)):
             # change to option index
             option = self.options.index(option)
-            
+
         self._webdriver.set_property(self._locators, 'selectedIndex', option)
         self._webdriver.fire_event(self._locators, 'change')
         
