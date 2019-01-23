@@ -337,12 +337,11 @@ class WebDriverBase(IWebDriver):
         return web_driver_cls(webview)
     
     def _my_encode(self, text):
-        '''
-                    对于中文，统一处理成unicode编码
-                    如“中国”，变成“\u4e2d\u56fd”
+        '''对于中文，统一处理成unicode编码
+        如“中国”，变成“\u4e2d\u56fd”
         '''
         text = unicode_decode(text)
-        return text.encode('raw_unicode_escape')
+        return general_encode(text.encode('raw_unicode_escape'))
 
     def _my_decode(self, text):
         return text.decode('raw_unicode_escape')

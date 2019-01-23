@@ -61,8 +61,8 @@ def list_data_files(packages):
     return data_files 
 
 def get_description():
-    with open(os.path.join(BASE_DIR, "README.md"), "r") as fh:
-        return fh.read()
+    with open(os.path.join(BASE_DIR, "README.md"), "rb") as fh:
+        return fh.read().decode('utf8')
      
 if __name__ == "__main__":  
     setup(
