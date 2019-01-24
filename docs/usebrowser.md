@@ -179,6 +179,7 @@ class DemoTest(BrowserTestCase):
 ```python
 BrowserTestCase=__import__(package.moudle)
 ```
+跨终端的具体用例写法可以参考[QT4WDemo项目](https://github.com/qtacore/QT4WDemoProj)
 ### 内嵌页面如何实现WORA
 内嵌页面，实际上也是一个隐形的浏览器，内嵌页面实现WORA，同样必须为内嵌页面封装IBrowser类，然后使用Browser.register_browser(),方法注册该内嵌页面的浏览器封装即可。使用方式和上面相同。如何实现IBrowser封装，Android端可以参考[QT4ABrowser][2]的实现，IOS端可以参考[Safari][3]的实现。
 
