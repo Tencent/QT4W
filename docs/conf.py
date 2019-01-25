@@ -18,7 +18,7 @@ import shlex
 
 from recommonmark.parser import CommonMarkParser
 import sphinx_rtd_theme
-#import sphinx_markdown_tables
+import sphinx_markdown_tables
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -35,7 +35,7 @@ import sphinx_rtd_theme
 # ones.
 extensions = [
 'sphinx.ext.autodoc',
-#'sphinx_markdown_tables',
+'sphinx_markdown_tables',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
