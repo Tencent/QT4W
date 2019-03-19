@@ -69,7 +69,6 @@ class TimeoutError(QT4WRuntimeError):
     
 class LazyDict(object):
     '''类字典容器，本身不存储数据，只在需要时调用相应函数实现读写操作'''
-    # 2012-02-21    beyondli    创建
     def __init__(self, getter, setter=None, lister=None):
         self._getter = getter
         self._setter = setter
@@ -105,14 +104,11 @@ class LazyDict(object):
 
 class WebElementAttributes(LazyDict):
     '''供WebElement的Attributes属性使用的类字典容器'''
-    # 2012-02-14    beyondli    创建
-    # 2012-02-21    beyondli    改为从LazyDict继承
     def __delitem__(self):
         raise Exception("Attribute cannot be deleted.")
 
 class WebElementStyles(LazyDict):
     '''供WebElement的Styles属性使用的类字典容器'''
-    # 2012-02-21    beyondli    创建
     def __setitem__(self, key, value):
         raise Exception("Style cannot be set.")
 
