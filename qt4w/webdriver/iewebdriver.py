@@ -319,7 +319,23 @@ class IEWebDriver(WebDriverBase):
     '''
     driver_script = '''
     if(window.Element){
-        Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
+       var proto=Element.prototype
+       if (proto==undefined) 
+       {
+           Node.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded){
+            centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
+            var rect = this.getBoundingClientRect();
+            var clientWidth = document.documentElement.clientWidth - 20;
+            var clientHeight = document.documentElement.clientHeight - 20;//避免存在滚动条导致遮挡控件
+            if(rect.left >= clientWidth || rect.right <= 0 || rect.top >= clientHeight || rect.bottom <= 0)
+            {
+                this.scrollIntoView();
+            }
+          }
+        }
+       else
+       {
+            Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
             centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
             var rect = this.getBoundingClientRect();
             var clientWidth = document.documentElement.clientWidth - 20;
@@ -327,7 +343,9 @@ class IEWebDriver(WebDriverBase):
             if(rect.left >= clientWidth || rect.right <= 0 || rect.top >= clientHeight || rect.bottom <= 0){
                 this.scrollIntoView();
             }
-        }
+        }  
+       }
+        
     };
     '''
     driver_script += WebDriverBase.driver_script + r'''
@@ -336,7 +354,7 @@ class IEWebDriver(WebDriverBase):
         return 1;
     };
     '''
-    
+
     def _wait_for_ready(self, frame_xpaths, timeout=30):
         '''页面未加载完成时注入js可能会导致“拒绝访问”异常
         '''
@@ -345,10 +363,10 @@ class IEWebDriver(WebDriverBase):
             ready_state = self.get_ready_state(frame_xpaths)
             if ready_state != 'loading': return
             time.sleep(0.5)
-            
+
     def eval_script(self, frame_xpaths, script):
         '''在指定frame中执行JavaScript，并返回执行结果
-        
+
         :param frame_xpaths: frame元素的XPATH路径，如果是顶层页面，怎传入“[]”
         :type frame_xpaths:  list
         :param script:       要执行的JavaScript语句
@@ -371,17 +389,17 @@ class IEWebDriver(WebDriverBase):
 #                 return self.eval_script(e.frame, script)
             else:
                 raise e
-    
+
     def get_style(self, elem_xpaths, style_name):
         '''获取元素的某一样式值
-         
+
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param style_name:  样式名称
         :type style_name:   string
         '''
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
- 
+
         js = r'''
             var node = qt4w_driver_lib.selectNode('%s');
             if(window.getComputedStyle != undefined){
@@ -391,8 +409,8 @@ class IEWebDriver(WebDriverBase):
             }
         ''' % (elem_xpath, style_name, style_name)
         return self.eval_script(frame_xpaths, js)
-    
-    
+
+
 if __name__ == '__main__':
     from qt4w.webview.iewebview import IEWebView
     webview = IEWebView(0x1923b0)
