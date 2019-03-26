@@ -27,5 +27,36 @@ class WebkitWebDriver(WebDriverBase):
     driver_script = WebDriverBase.driver_script + r'''
     window.Notification = undefined; // disable Notification
     window['qt4w_driver_lib']['getScale'] = function(){return window.devicePixelRatio;};
+    window['qt4w_driver_lib']['getElemRect'] = function(xpath) {
+        var node = this.selectNode(xpath);
+        var result = new Array();
+        var rect = node.getBoundingClientRect();
+        var scale = this.getScale();
+        scale *= this.getElementZoom(node);
+        var left = rect.left;
+        var top = rect.top;
+        if (document.documentElement.scrollWidth > document.documentElement.clientWidth) {
+            // 页面未适配终端
+            if (window.visualViewport) {
+                // above Chrome 61
+                left -= window.visualViewport.offsetLeft;
+                top -= window.visualViewport.offsetTop;
+            } else {
+                if (window.scrollX && document.documentElement.getBoundingClientRect().left == 0) {
+                    // getBoundingClientRect return fix position
+                    left -= window.scrollX;
+                }
+                if (window.scrollY && document.documentElement.getBoundingClientRect().top == 0) {
+                    top -= window.scrollY;
+                }
+            }
+        }
+        
+        result.push(left * scale);
+        result.push(top * scale);
+        result.push(rect.width * scale);
+        result.push(rect.height * scale);
+        return result.toString();
+    }
     document.addEventListener('click', function(event){console.log('[ClickListener](' + event.clientX + ', ' + event.clientY + ')');}, true);
     '''
