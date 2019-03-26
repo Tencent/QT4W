@@ -172,8 +172,8 @@ class WebDriverBase(IWebDriver):
         var rect = node.getBoundingClientRect();
         var scale = this.getScale();
         scale *= this.getElementZoom(node);
-        var left = rect.left - document.body.scrollLeft;
-        var top = rect.top - document.body.scrollTop;
+        var left = rect.left;
+        var top = rect.top;
         result.push(left * scale);
         result.push(top * scale);
         result.push(rect.width * scale);
