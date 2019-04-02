@@ -69,6 +69,7 @@ class TimeoutError(QT4WRuntimeError):
     
 class LazyDict(object):
     '''类字典容器，本身不存储数据，只在需要时调用相应函数实现读写操作'''
+
     def __init__(self, getter, setter=None, lister=None):
         self._getter = getter
         self._setter = setter
