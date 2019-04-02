@@ -15,9 +15,11 @@
 '''IWebDriver接口
 '''
 
+import json
+import six
 
 from qt4w.util import logger, general_encode, unicode_decode, ControlNotFoundError
-import six
+
 
 class IWebDriver(object):
     '''IWebDriver接口
@@ -240,7 +242,6 @@ class WebDriverBase(IWebDriver):
     },
     
     logData: [],
-    
     hookConsoleLog: function(){
         var self = this;
         if(window.console && window.JSON){
@@ -307,8 +308,9 @@ class WebDriverBase(IWebDriver):
         }
     },
     
-    readLogData: function(){
-        return this.logData.splice(0, 1);
+    readLogData: function (count) {
+        if (count < 0) count = this.logData.length;
+        return this.logData.splice(0, count);
     }
     
     };
@@ -429,7 +431,11 @@ class WebDriverBase(IWebDriver):
         frame_xpath = frame_xpaths[-1].replace('\'', '"')
         js = r'''
         var frame_node = qt4w_driver_lib.selectNode('%s');
-        (frame_node.getAttribute('name') || frame_node.getAttribute('id')) + ',' + frame_node.getAttribute('src');
+        var url = frame_node.getAttribute('src');
+        if (url[0] == '/') {
+            url = location.protocol + '//' + location.host + url;
+        }
+        (frame_node.getAttribute('name') || frame_node.getAttribute('id')) + ',' + url;
         ''' % (frame_xpath)
         # 优先使用name，没有name使用id
         result = self.eval_script(frame_xpaths[:-1], js)
@@ -720,15 +726,21 @@ node.dispatchEvent(evt);
         ''' % (elem_xpath, type)
         self.eval_script(frame_xpaths, js)
     
-    def read_console_log(self, frame_xpaths):
+    def read_console_log(self, frame_xpaths, count=1):
         '''读取指定条数的日志
         
         :param frame_xpaths: 当前页面的XPATH路径
         :type  frame_xpaths: list
-        :return:             读取到的一条日志
+        :param count:        要读取的日志条数，默认为1
+        :type  count:        int
+        :return:             读取到的日志
         '''
-        js = '''qt4w_driver_lib.readLogData();'''
-        return self.eval_script(frame_xpaths, js)
+        js = '''JSON.stringify(qt4w_driver_lib.readLogData(%d));''' % count
+        result = json.loads(self.eval_script(frame_xpaths, js))
+        if count == 1 and len(result) == 1:
+            return result[0]
+        return result
+
         
 if __name__ == '__main__':
     pass
