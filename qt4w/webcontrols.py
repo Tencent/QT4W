@@ -205,7 +205,12 @@ class IWebPage(object):
         :type  timeout: int
         '''
         raise NotImplementedError
-        
+
+    def screenshot(self):
+        '''获取page页面截图
+        '''
+        raise NotImplementedError
+
 class IWebElement(object):
     '''WebElement接口定义
     '''
@@ -480,6 +485,11 @@ class IWebElement(object):
         '''
         raise NotImplementedError
 
+    def screenshot(self):
+        '''设置控件截图
+        '''
+        raise NotImplementedError
+
 class ControlContainer(object):
     '''控件容器基类
     '''
@@ -693,7 +703,20 @@ class WebElement(ControlContainer, IWebElement):
         '''元素相对于WebView的位置信息
         '''
         return self._webdriver.get_elem_rect(self._locators, False)
-    
+
+
+    def screenshot(self):
+        '''设置控件截图
+        '''
+        if not self.visible:
+            self._webdriver.scroll_to_visible(self._locators)
+        page=self.page.screenshot()
+        left=self.rect[0]
+        top=self.rect[1]
+        width=self.rect[2]
+        heigth=self.rect[3]
+        return page.crop(box=(left,top,left+width,top+heigth))
+
     @property
     def BoundingRect(self):
         '''元素位置信息
@@ -840,7 +863,6 @@ class WebElement(ControlContainer, IWebElement):
         :param interval:重试间隔时间
         :type interval:int或float
         '''
-        from util import TimeoutError
         time0 = time.time()
         while time.time() - time0 < timeout:
             real_value = self.attributes[name]
@@ -873,7 +895,6 @@ class WebElement(ControlContainer, IWebElement):
         :param interval:重试间隔时间
         :type interval: int或float
         '''
-        from util import TimeoutError
         time0 = time.time()
         while time.time() - time0 < timeout:
             if self.inner_text == text:return
@@ -895,7 +916,6 @@ class WebElement(ControlContainer, IWebElement):
     def _pre_click(self, x_offset=None, y_offset=None, highlight=True):
         '''点击前的处理
         '''
-        from qt4w.util import TimeoutError
         # 等待控件可见
         timeout = 5
         time0 = time.time()
@@ -916,7 +936,6 @@ class WebElement(ControlContainer, IWebElement):
             self._webdriver.scroll_to_visible(self._locators) # 避免某些情况下滑动失败
             
         if highlight: self.highlight()
-
         rect = self.rect  # 此时坐标可能发生变化，需要重新获取
         outer_rect = self._webview.visible_rect
         outer_rect = [0, 0, outer_rect[2], outer_rect[3]]  # 换算成以WebView左上角为原点的坐标
@@ -942,7 +961,6 @@ class WebElement(ControlContainer, IWebElement):
         :type  highlight: bool
         '''
         x_offset, y_offset = self._pre_click(x_offset, y_offset, highlight)
-        # print x_offset, y_offset
         self._webview.click(x_offset, y_offset)
     
     def long_click(self, x_offset=None, y_offset=None, duration=1):
@@ -1169,7 +1187,6 @@ class WebPage(ControlContainer, IWebPage):
         locators = self._locator[:]
         locators.append(locator)
         elem_count = self._webdriver.get_element_count(locators)
-        # print elem_count
         def get_elem(index):
             loc = '(%s)[%d]' % (locator, index + 1)
             return self.get_element(loc, elem_cls)
@@ -1217,7 +1234,11 @@ class WebPage(ControlContainer, IWebPage):
             time.sleep(0.1)
         else:
             raise TimeoutError('Read console log timeout')
-           
+
+    def screenshot(self):
+        '''获取page页面截图
+        '''
+        self._webview.screenshot()
         
 class FrameElement(WebElement):
     '''frame/iframe元素
