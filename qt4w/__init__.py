@@ -19,7 +19,6 @@
 
 class XPath(str):
     '''表示XPath'''
-    # 2012-02-14    beyondli    创建
     def __init__(self, obj):
         str.__init__(self)
         self._obj = obj
