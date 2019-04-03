@@ -27,8 +27,7 @@ class WebkitWebDriver(WebDriverBase):
     driver_script = WebDriverBase.driver_script + r'''
     window.Notification = undefined; // disable Notification
     window['qt4w_driver_lib']['getScale'] = function(){return window.devicePixelRatio;};
-    window['qt4w_driver_lib']['getElemRect'] = function(xpath) {
-        var node = this.selectNode(xpath);
+    window['qt4w_driver_lib']['getElemRect'] = function(node) {
         var result = new Array();
         var rect = node.getBoundingClientRect();
         var scale = this.getScale();
