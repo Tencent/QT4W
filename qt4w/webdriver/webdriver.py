@@ -168,18 +168,21 @@ class WebDriverBase(IWebDriver):
         return scale;
     },
     
-    getElemRect: function(xpath){
-        var node = this.selectNode(xpath);
+    getElemRect: function(node){
         var result = new Array();
         var rect = node.getBoundingClientRect();
         var scale = this.getScale();
         scale *= this.getElementZoom(node);
         var left = rect.left;
         var top = rect.top;
+        var width = rect.width;
+        var height = rect.height;
+        if (typeof width == 'undefined') width = rect.right - rect.left;
+        if (typeof height == 'undefined') height = rect.bottom - rect.top;
         result.push(left * scale);
         result.push(top * scale);
-        result.push(rect.width * scale);
-        result.push(rect.height * scale);
+        result.push(width * scale);
+        result.push(height * scale);
         return result.toString();
     },
     
@@ -530,7 +533,8 @@ class WebDriverBase(IWebDriver):
         '''获取元素在当前frame中的相对坐标
         '''
         js = '''
-            qt4w_driver_lib.result = qt4w_driver_lib.getElemRect('%s');
+            var node = qt4w_driver_lib.selectNode('%s');
+            qt4w_driver_lib.result = qt4w_driver_lib.getElemRect(node);
         ''' % elem_xpath  
         result = self.eval_script(frame_xpaths, js)
         result = result.replace('"', '')
