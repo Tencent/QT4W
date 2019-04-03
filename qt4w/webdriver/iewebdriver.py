@@ -318,20 +318,66 @@ class IEWebDriver(WebDriverBase):
     '''IE的WebDriver实现
     '''
     driver_script = '''
-    if(window.Element){
-        var prototype = Element.prototype || window.Node && Node.prototype;
-        if (prototype) {
-            prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
-                centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
-                var rect = this.getBoundingClientRect();
-                var clientWidth = document.documentElement.clientWidth - 20;
-                var clientHeight = document.documentElement.clientHeight - 20;//避免存在滚动条导致遮挡控件
-                if(rect.left >= clientWidth || rect.right <= 0 || rect.top >= clientHeight || rect.bottom <= 0){
-                    this.scrollIntoView();
-                }
+    if ( !window.Element || !Element.prototype) {
+        var __Element = window.Element;
+        var __prototype = window.Element ? Element.prototype : null;
+        window.Element = function(){};
+        if (!__prototype) {
+            // copy origin attrs
+            for(var key in __Element)
+                Element.prototype[key] = __Element[key];
+        }
+        var _hookElement = function (element) {
+            if (!element) return;
+            if (!element.hooked) {
+                for(var key in Element.prototype)
+                    element[key] = Element.prototype[key];
+                element.hooked = true;
             }
         }
-    };
+
+        var hookAllElements = function () {
+            var elements = [document.documentElement];
+            while (elements.length > 0) {
+                var element = elements.splice(0, 1)[0];
+                _hookElement(element);
+                if (element.children) {
+                    for (var i = 0; i < element.children.length; i++) {
+                        elements.push(element.children[i]);
+                    }
+                }
+                
+            }
+        }
+
+        setTimeout(function () {
+            hookAllElements();
+        }, 100);
+        
+    }
+
+    Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
+        centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
+        var rect = this.getBoundingClientRect();
+        var clientWidth = document.documentElement.clientWidth - 20;
+        var clientHeight = document.documentElement.clientHeight - 20;//避免存在滚动条导致遮挡控件
+        if(rect.left >= clientWidth || rect.right <= 0 || rect.top >= clientHeight || rect.bottom <= 0){
+            this.scrollIntoView();
+        }
+    }
+    if (!Element.prototype.dispatchEvent) {
+        Element.prototype.dispatchEvent = function (event) {
+            if (event.type == 'input') {
+                event.type = 'propertychange';
+                event.propertyName = 'value';
+            } else if (event.type == 'change') {
+                return;
+            }
+            event.srcElement = event.target = this;
+            this.fireEvent('on' + event.type, event);
+        }
+    }
+
     if (Function.prototype.bind && window.console && typeof console.log == "object"){
         ["log","info","warn","error","assert","dir","clear","profile","profileEnd"].forEach(function (method) {
             console[method] = this.bind(console[method], console);
@@ -359,6 +405,16 @@ class IEWebDriver(WebDriverBase):
             }
         }
     }());
+
+    if (!document.createEvent) {
+        document.createEvent = function (event) {
+            var evt = document.createEventObject(event);
+            evt.initEvent = function (type) {
+                evt.type = type;
+            }
+            return evt;
+        }
+    }
     '''
     driver_script += WebDriverBase.driver_script + r'''
     window['qt4w_driver_lib']['getScale'] = function(){return screen.deviceXDPI / screen.logicalXDPI;};
@@ -424,21 +480,4 @@ class IEWebDriver(WebDriverBase):
     
     
 if __name__ == '__main__':
-    from qt4w.webview.iewebview import IEWebView
-    webview = IEWebView(0x1923b0)
-    webdriver = WebDriver(webview)
-    input_xpath = ['//input[@id="smart_input1"]']
-    frame_xpath = ['//iframe[@id="login_frame"]']
-    elem_xpath = '//span[@id="qr_area"]'
-    # elem_xpath = '//ul[@id="rotator"]'
-    # print webdriver.ready_state
-    # print webdriver.get_attribute(input_xpath, 'value')
-    # print webdriver.get_property(input_xpath, 'value')
-    # webdriver.set_attribute(input_xpath, 'value', 'erty')
-    # webdriver.set_property(input_xpath, 'value', 'erty')
-    # print webdriver.get_style(input_xpath, 'width')
-    # print webdriver._get_elem_rect(frame_xpath, elem_xpath)
-    frame_xpath.append(elem_xpath)
-    webdriver.highlight(frame_xpath)
-    script = '''qt4w_driver_lib.highlight(qt4w_driver_lib.v('//ul[@id="rotator"]'))'''
-    # print webdriver.eval_script([], script)
+    pass

@@ -711,7 +711,6 @@ class WebElement(ControlContainer, IWebElement):
         if not self.visible:
             self._webdriver.scroll_to_visible(self._locators)
         page=self.page.screenshot()
-        print self.rect
         left=self.rect[0]
         top=self.rect[1]
         width=self.rect[2]
@@ -864,7 +863,6 @@ class WebElement(ControlContainer, IWebElement):
         :param interval:重试间隔时间
         :type interval:int或float
         '''
-        from util import TimeoutError
         time0 = time.time()
         while time.time() - time0 < timeout:
             real_value = self.attributes[name]
@@ -918,7 +916,6 @@ class WebElement(ControlContainer, IWebElement):
     def _pre_click(self, x_offset=None, y_offset=None, highlight=True):
         '''点击前的处理
         '''
-        from qt4w.util import TimeoutError
         # 等待控件可见
         timeout = 5
         time0 = time.time()
@@ -964,7 +961,6 @@ class WebElement(ControlContainer, IWebElement):
         :type  highlight: bool
         '''
         x_offset, y_offset = self._pre_click(x_offset, y_offset, highlight)
-        # print x_offset, y_offset
         self._webview.click(x_offset, y_offset)
     
     def long_click(self, x_offset=None, y_offset=None, duration=1):
@@ -1191,7 +1187,6 @@ class WebPage(ControlContainer, IWebPage):
         locators = self._locator[:]
         locators.append(locator)
         elem_count = self._webdriver.get_element_count(locators)
-        # print elem_count
         def get_elem(index):
             loc = '(%s)[%d]' % (locator, index + 1)
             return self.get_element(loc, elem_cls)
