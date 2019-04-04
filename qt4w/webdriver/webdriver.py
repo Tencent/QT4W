@@ -124,6 +124,7 @@ class WebDriverBase(IWebDriver):
     '''WebDriver基类
     '''
     driver_script = r'''
+    if (typeof window.qt4w_hook_console == 'undefined') window.qt4w_hook_console = true;
     window['qt4w_driver_lib'] = {
     getScale : function(){
         return 1;
@@ -245,10 +246,10 @@ class WebDriverBase(IWebDriver):
     },
     
     logData: [],
-    hookConsoleLog: function(){
+    hookConsole: function(){
         var self = this;
         if(window.console && window.JSON){
-            var hookConsoleFunc = function(){
+            var hookedConsoleFunc = function(){
                 var timeStr = new Date().toLocaleString();
                 for(var i=1;i<arguments.length;i++){
                     var data = arguments[i];
@@ -268,46 +269,22 @@ class WebDriverBase(IWebDriver):
                 args.splice(0, 1);
                 return arguments[0].apply(this, args);
             }
-            if(console.log){
-                var origLog = console.log;
-                console.log = function(){
+
+            var hookFunction = function (funcName) {
+                if (!console[funcName]) return;
+                var origFunc = console[funcName];
+                console[funcName] = function(){
                     var args = Array.prototype.slice.call(arguments);
-                    args.splice(0, 0, origLog);
-                    return hookConsoleFunc.apply(this, args);
+                    args.splice(0, 0, origFunc);
+                    return hookedConsoleFunc.apply(this, args);
                 }
             }
-            if(console.dir){
-                var origDir = console.dir;
-                console.dir = function(data){
-                    var args = Array.prototype.slice.call(arguments);
-                    args.splice(0, 0, origDir);
-                    return hookConsoleFunc.apply(this, args);
-                }
-            }
-            if(console.info){
-                var origInfo = console.info;
-                console.info = function(data){
-                    var args = Array.prototype.slice.call(arguments);
-                    args.splice(0, 0, origInfo);
-                    return hookConsoleFunc.apply(this, args);
-                }
-            }
-            if(console.warn){
-                var origWarn = console.warn;
-                console.warn = function(data){
-                    var args = Array.prototype.slice.call(arguments);
-                    args.splice(0, 0, origWarn);
-                    return hookConsoleFunc.apply(this, args);
-                }
-            }
-            if(console.error){
-                var origError = console.error;
-                console.error = function(data){
-                    var args = Array.prototype.slice.call(arguments);
-                    args.splice(0, 0, origError);
-                    return hookConsoleFunc.apply(this, args);
-                }
-            }
+
+            hookFunction('log');
+            hookFunction('dir');
+            hookFunction('info');
+            hookFunction('warn');
+            hookFunction('error');
         }
     },
     
@@ -318,7 +295,7 @@ class WebDriverBase(IWebDriver):
     
     };
     qt4w_driver_lib.initHighlightDiv();
-    qt4w_driver_lib.hookConsoleLog();
+    if (window.qt4w_hook_console) qt4w_driver_lib.hookConsole();
     '''
     
     def __init__(self, webview):
