@@ -248,7 +248,7 @@ class WebDriverBase(IWebDriver):
     logData: [],
     hookConsole: function(){
         var self = this;
-        if(window.console && window.JSON){
+        if(window.console && console.log && console.log.apply && window.JSON){
             var hookedConsoleFunc = function(){
                 var timeStr = new Date().toLocaleString();
                 for(var i=1;i<arguments.length;i++){
@@ -415,7 +415,7 @@ class WebDriverBase(IWebDriver):
         if (url[0] == '/') {
             url = location.protocol + '//' + location.host + url;
         }
-        (frame_node.getAttribute('name') || frame_node.getAttribute('id')) + ',' + url;
+        (frame_node.getAttribute('name') || frame_node.getAttribute('id') || '') + ',' + url;
         ''' % (frame_xpath)
         # 优先使用name，没有name使用id
         result = self.eval_script(frame_xpaths[:-1], js)
