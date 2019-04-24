@@ -22,7 +22,6 @@ import mock
 from qt4w.webview.webview  import IWebView
 from qt4w.webcontrols import WebElement ,ui_list,UIListBase
 from test.util import TestPage,TestElement
-from past.builtins import cmp
 
 
 class TestWebElement(unittest.TestCase):
