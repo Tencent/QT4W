@@ -66,7 +66,8 @@ class XPath(str):
         if p2 < 0:
             p2 = len(self._censor().strip("/"))
         nodetest = self._censor().strip("/")[p1 + 1:p2]
-        # print nodetest
+        if nodetest.endswith(')'):
+            nodetest = nodetest[:-1]
         return nodetest
 
     def break_steps(self):
