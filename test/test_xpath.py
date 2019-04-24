@@ -42,6 +42,9 @@ class TestXPath(unittest.TestCase):
          xp = XPath('//iframe[@id="google_shimpl"]//div[text()="test"]')
          steps = xp.break_frames()
          self.assertEqual('//iframe[@id="google_shimpl"]', steps[0]);
+         xp = XPath('(//iframe[@id="google_shimpl"])//div[text()="test"]')
+         steps = xp.break_frames()
+         self.assertEqual('(//iframe[@id="google_shimpl"])', steps[0]);
 
 if __name__ == '__main__':
     unittest.main()
