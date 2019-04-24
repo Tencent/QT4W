@@ -612,6 +612,7 @@ class WebElement(ControlContainer, IWebElement):
         self._webview = self._page._webview
         self._webdriver = self._page._webdriver
         self._root = root
+
         if isinstance(root, WebPage):
             self._locators = XPath(locator).break_frames()
         elif isinstance(root, FrameElement):
@@ -620,6 +621,7 @@ class WebElement(ControlContainer, IWebElement):
         else:
             self._locators = root._locators[:-1]
             self._locators += XPath(root._locators[-1] + locator).break_frames()
+
         self._attrs = WebElementAttributes(self._getattr, self._setattr, self._listattr)
         self._styles = WebElementStyles(self._getstyle)
         
@@ -1185,10 +1187,14 @@ class WebPage(ControlContainer, IWebPage):
         '''
         from qt4w.util import LazyDict
         locators = self._locator[:]
-        locators.append(locator)
+        child_locators = XPath(locator).break_frames()
+        locators.extend(child_locators)
         elem_count = self._webdriver.get_element_count(locators)
         def get_elem(index):
-            loc = '(%s)[%d]' % (locator, index + 1)
+            if len(child_locators) == 1:
+                loc = '(%s)[%d]' % (locator, index + 1)
+            else:
+                loc = '%s(%s)[%d]' % (''.join(child_locators[:-1]), child_locators[-1], index + 1)
             return self.get_element(loc, elem_cls)
 
         return LazyDict(get_elem, lister=lambda:xrange(elem_count))
@@ -1268,6 +1274,7 @@ class FrameElement(WebElement):
         '''
         '''
         return self.framepage
+
 
 class InputElement(WebElement):
     '''input元素
