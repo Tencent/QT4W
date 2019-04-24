@@ -412,7 +412,7 @@ class WebDriverBase(IWebDriver):
         js = r'''
         var frame_node = qt4w_driver_lib.selectNode('%s');
         var url = frame_node.getAttribute('src');
-        if (url[0] == '/') {
+        if (url && url[0] == '/') {
             url = location.protocol + '//' + location.host + url;
         }
         (frame_node.getAttribute('name') || frame_node.getAttribute('id') || '') + ',' + url;
