@@ -65,8 +65,10 @@ class XPath(str):
         p2 = self._censor().strip("/").find("[", p1)
         if p2 < 0:
             p2 = len(self._censor().strip("/"))
-        nodetest = self._censor().strip("/")[p1 + 1:p2]
-        if nodetest.endswith(')'):
+        nodetest = self._censor().strip("/")[p1:p2]
+        if nodetest[0] == '/':
+            nodetest = nodetest[1:]
+        if nodetest[-1] == ')':
             nodetest = nodetest[:-1]
         return nodetest
 
