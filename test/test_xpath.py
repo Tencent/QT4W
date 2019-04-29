@@ -24,7 +24,7 @@ class TestXPath(unittest.TestCase):
 
     def test_node(self):
         xp=XPath('//div[@id="google_shimpl"]')
-        self.assertEqual("iv",xp.Nodetest);
+        self.assertEqual("div", xp.Nodetest);
         xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
         self.assertEqual("div", xp.Nodetest);
 
@@ -45,6 +45,9 @@ class TestXPath(unittest.TestCase):
          xp = XPath('(//iframe[@id="google_shimpl"])//div[text()="test"]')
          steps = xp.break_frames()
          self.assertEqual('(//iframe[@id="google_shimpl"])', steps[0]);
+         xp = XPath('//frame[@id="main"]//iframe[@id="mainwindow"]//I[@class="spr nav1"]')
+         steps = xp.break_frames()
+         self.assertEqual('//frame[@id="main"]', steps[0]);
 
 if __name__ == '__main__':
     unittest.main()
