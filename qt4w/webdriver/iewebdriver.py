@@ -338,7 +338,7 @@ class IEWebDriver(WebDriverBase):
     '''IE的WebDriver实现
     '''
     driver_script = json_script + r'''
-    if ( !window.Element || !Element.prototype) {
+    if ( !window.Element || !Element.prototype || !(document.documentElement instanceof Element)) {
         var __Element = window.Element;
         var __prototype = window.Element ? Element.prototype : null;
         window.Element = function(){};
@@ -350,8 +350,14 @@ class IEWebDriver(WebDriverBase):
         var _hookElement = function (element) {
             if (!element) return;
             if (!element.hooked) {
-                for(var key in Element.prototype)
-                    element[key] = Element.prototype[key];
+                console.log('hook ' + element);
+                for(var key in Element.prototype) {
+                    try{
+                        element[key] = Element.prototype[key];
+                    }catch(e){
+                        console.warn(element.outerHTML + ':' + key + ':' + e.message);
+                    }
+                }
                 element.hooked = true;
             }
         }
@@ -366,12 +372,29 @@ class IEWebDriver(WebDriverBase):
                         elements.push(element.children[i]);
                     }
                 }
-                
+            }
+        }
+
+        var hookCreateElement = function () {
+            if (document.__createElement) return;
+            document.__createElement = document.createElement;
+            document.createElement = function (tagName) {
+                console.log('create element ' + tagName);
+                var element = document.__createElement(tagName);
+                for(var key in Element.prototype)
+                    element[key] = Element.prototype[key];
+                element.hooked = true;
+                return element;
             }
         }
 
         setTimeout(function () {
-            hookAllElements();
+            try {
+                hookCreateElement();
+                hookAllElements();
+            } catch (e) {
+                alert('Hook element error: ' + e.message);
+            }
         }, 100);
         
     }
@@ -390,15 +413,23 @@ class IEWebDriver(WebDriverBase):
             if (event.type == 'input') {
                 event.type = 'propertychange';
                 event.propertyName = 'value';
-            } else if (event.type == 'change') {
-                return;
             }
             event.srcElement = event.target = this;
             this.fireEvent('on' + event.type, event);
         }
     }
 
+    Array.prototype.forEach = Array.prototype.forEach || function (callback) {
+        if (typeof callback != 'function') {
+            throw TypeError(typeof callback);
+        }
+        for(var i = 0; i < this.length; i ++) {
+            callback.call(arguments[1], this[i], i, this);
+        }
+    };
+
     if (Function.prototype.bind && window.console && typeof console.log == "object"){
+        // 解决console.log没有apply/bind方法问题
         ["log","info","warn","error","assert","dir","clear","profile","profileEnd"].forEach(function (method) {
             console[method] = this.bind(console[method], console);
         }, Function.prototype.call);
