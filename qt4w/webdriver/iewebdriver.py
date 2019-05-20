@@ -366,6 +366,7 @@ class IEWebDriver(WebDriverBase):
             var elements = [document.documentElement];
             while (elements.length > 0) {
                 var element = elements.splice(0, 1)[0];
+                if (!element) continue;
                 _hookElement(element);
                 if (element.children) {
                     for (var i = 0; i < element.children.length; i++) {
