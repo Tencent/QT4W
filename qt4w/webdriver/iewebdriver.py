@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# Tencent is pleased to support the open source community by making QTA available.
-# Copyright (C) 2016THL A29 Limited, a Tencent company. All rights reserved.
-# Licensed under the BSD 3-Clause License (the "License"); you may not use this
+# Tencent is pleased to support the open source community by making QT4W available.
+# Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
+# Licensed under the BSD 3-Clause License (the "License");you may not use this
 # file except in compliance with the License. You may obtain a copy of the License at
 #
 # https://opensource.org/licenses/BSD-3-Clause
 #
 # Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
@@ -474,7 +474,7 @@ class IEWebDriver(WebDriverBase):
         return 1;
     };
     '''
-    
+
     def _wait_for_ready(self, frame_xpaths, timeout=30):
         '''页面未加载完成时注入js可能会导致“拒绝访问”异常
         '''
@@ -483,10 +483,10 @@ class IEWebDriver(WebDriverBase):
             ready_state = self.get_ready_state(frame_xpaths)
             if ready_state != 'loading': return
             time.sleep(0.5)
-            
+
     def eval_script(self, frame_xpaths, script):
         '''在指定frame中执行JavaScript，并返回执行结果
-        
+
         :param frame_xpaths: frame元素的XPATH路径，如果是顶层页面，怎传入“[]”
         :type frame_xpaths:  list
         :param script:       要执行的JavaScript语句
@@ -509,17 +509,17 @@ class IEWebDriver(WebDriverBase):
 #                 return self.eval_script(e.frame, script)
             else:
                 raise e
-    
+
     def get_style(self, elem_xpaths, style_name):
         '''获取元素的某一样式值
-         
+
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param style_name:  样式名称
         :type style_name:   string
         '''
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
- 
+
         js = r'''
             var node = qt4w_driver_lib.selectNode('%s');
             if(window.getComputedStyle != undefined){
@@ -529,7 +529,7 @@ class IEWebDriver(WebDriverBase):
             }
         ''' % (elem_xpath, style_name, style_name)
         return self.eval_script(frame_xpaths, js)
-    
-    
+
+
 if __name__ == '__main__':
     pass

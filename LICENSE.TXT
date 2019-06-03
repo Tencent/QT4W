@@ -1,33 +1,24 @@
-﻿Tencent is pleased to support the open source community by making QTA available.  
-Copyright (C) 2016THL A29 Limited, a Tencent company.  All rights reserved.
-If you have downloaded a copy of the QTA binary from Tencent, please note that the QTA binary is licensed under the BSD 3-Clause License.
-If you have downloaded a copy of the QTA source code from Tencent, please note that QTAsource code is licensed under the BSD 3-Clause License, except for the third-party components listed below which are subject to different license terms.  Your integration ofQTA into your own projects may require compliance with the BSD 3-ClauseLicense, as well as the other licenses applicable to the third-party components included within QTA.
-A copy of theBSD 3-Clause License is included in this file.
+﻿Tencent is pleased to support the open source community by making QT4W available.  
+Copyright (C) 2019 THL A29 Limited, a Tencent company.  All rights reserved.
+If you have downloaded a copy of the QT4W binary from Tencent, please note that the QT4W binary is licensed under the BSD 3-Clause License.
+If you have downloaded a copy of the QT4W source code from Tencent, please note that QT4W source code is licensed under the BSD 3-Clause License, except for the third-party components listed below which are subject to different license terms.  Your integration of QT4W into your own projects may require compliance with the BSD 3-Clause License, as well as the other licenses applicable to the third-party components included within QT4W.
+A copy of the BSD 3-Clause License is included in this file.
+
 Other dependencies and licenses:
 
-Open Source Software Licensed under the MITLicense:
---------------------------------------------------------------------
-1. JavaScript-XPath0.1.12
- (c) 2007 Cybozu Labs, Inc.
-
-
-Terms of the MITLicense:
---------------------------------------------------------------------
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Open Source Software Licensed Under the Apache License, Version 2.0:
+Open Source Software Licensed Under the Apache License, Version 2.0: 
 ----------------------------------------------------------------------------------------
-1. androguard 1.9
-Copyright (C) 2012 - 2015, Anthony Desnos (desnos at t0t0.fr) 
-All rights reserved.
+1. xpath.js  v0.5
+Copyright 2009 Henrik Lindqvist <henrik.lindqvist@llamalab.com>
 
 
 Terms of the Apache License, Version 2.0:
----------------------------------------------------
+--------------------------------------------------------------------
+Apache License
+
+Version 2.0, January 2004
+
+http://www.apache.org/licenses/
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
@@ -78,12 +69,41 @@ You may add Your own copyright statement to Your modifications and may provide a
 8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.
 9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.
 
+END OF TERMS AND CONDITIONS
+
+APPENDIX: How to apply the Apache License to your work
+To apply the Apache License to your work, attach the following boilerplate notice, with the fields enclosed by brackets "[]" replaced with your own identifying information. (Don't include the brackets!) The text should be enclosed in the appropriate comment syntax for the file format. We also recommend that a file or class name and description of purpose be included on the same "printed page" as the copyright notice for easier identification within third-party archives.
+
+Copyright [yyyy] [name of copyright owner]
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+
+
+Open Source Software Licensed Under the BSD 3-Clause License: 
+----------------------------------------------------------------------------------------
+1. QTAF  v5.0.125
+Copyright (C) 2016 THL A29 Limited, a Tencent company.  All rights reserved.
+
+2. QT4A  v2.2.10
+Copyright (C) 2016 THL A29 Limited, a Tencent company.  All rights reserved.
+
 
 Terms of the BSD 3-Clause License:
 --------------------------------------------------------------------
-
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-3. Neither the name of [copyright holder] nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of [copyright holder] nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
