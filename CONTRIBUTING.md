@@ -1,5 +1,5 @@
 # Contributing to QT4W
-Welcome to [report Issues](https://github.com/Tencent/QT4A/issues) or [pull requests](https://github.com/Tencent/QT4A/pulls). It's recommended to read the following Contributing Guild first to make contributing earlier. 
+Welcome to [report Issues](https://github.com/Tencent/QT4W/issues) or [pull requests](https://github.com/Tencent/QT4W/pulls). It's recommended to read the following Contributing Guild first to make contributing earlier. 
 
 ## issues
 We use Git Issues to track public bugs and feature requests.
@@ -32,9 +32,9 @@ If you have some urgent bugfix on a published version, but the `master` branch h
 
 ```
 master
- ¡ü
+ Â¡Ã¼
 dev        <--- hotfix PR
- ¡ü 
+ Â¡Ã¼ 
 feature/bugfix PR
 ```  
 
