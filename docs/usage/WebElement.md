@@ -47,6 +47,21 @@ from qt4w.webcontrols import  ui_list
 ```
 　　在使用ui_list封装控件时，需要直接在控件的type字段直接指定为ui_list(CalssType),在使用前需要从qt4w.webcontrols中引入该方法。ui_list会返回一个ClassTypeUIList的迭代器类，如上会生成WebElementUIList类，该类继承自UIListBase。此处的locator应该是可以定位到多个控件的。
 
+### Frame内部控件封装 
+在某些情况下，页面中可能有内嵌frame，直接按照上面的写法来写Frame/Iframe内部的控件，可能会报“ControlNotFoundError”错误。QT4W的实现中frame和控件是分开查找的，在一般搜索控件时，我们会直接在默认的页面下查找，不会查找内嵌Frame里的控件。因此对于frame的内部控件描述，可以参考以下实现：
+```python
+from qt4w.webcontrols import FrameElement
+'framename':{
+              'type': FrameElement, 'locator':XPath('//iframe[@id="frameid"]'),
+              'ui_map':{
+                  '帐号': XPath('//input[@class="inputstyle" and @type="text"]'),
+                  '密码': XPath('//input[@class="inputstyle password" and @type="password"]'),)
+               }
+            }
+```
+封装Frame内部控件时，需要先描述frame控件，然后再Frame控件的ui_map里描述其内部控件。
+
+
 ### 获取Web控件对象
 
 　　一般情况下控件都是在WebPage页面类进行封装，如果想操作该控件可以使用control方法来获取控件对象，示例如下：
