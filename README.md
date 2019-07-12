@@ -83,6 +83,8 @@ WebView是对浏览器窗口的抽象，是对原生控件的再次封装。QT4W
 | iOSBuildin | iOS | iOS系统内置浏览器和内嵌页面使用 | 由[QT4i](https://github.com/Tencent/QT4i/tree/master/qt4i/driver/web)提供| 
 | 微信小程序 | Android微信 | 微信小程序使用 |  由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)提供| 
 | Chrome | MacOS | Mac OS下的Chrome浏览器和内嵌页面使用 | 由QT4Mac提供 |
+
+
 如需要扩展新的WebView类型，请参考[WebView封装文档](https://qt4w.readthedocs.io/zh_CN/latest/extend/webview.html)。
 
 
