@@ -120,5 +120,4 @@ QT4W可用于各个端上的Web应用或者Native应用内嵌Web页面的自动�
 
 欢迎加入QQ群（432699528）交流使用和反馈
 
-![image](https://github.com/Tencent/QTAF/blob/master/docs/misc/qq_group.png)
  
