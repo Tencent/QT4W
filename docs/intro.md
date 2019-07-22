@@ -67,12 +67,19 @@ page.controls("XXX").click()
 
 在各个QT4x的支持下，QT4W目前支持多种操作系统下，不同浏览器内核和混合客户端的Web自动化。目前支持的情况如下：
 
-|   | WebKit内核  | IE内核 |   Gecko内核 | 
-| -- | -- | -- | -- | 
-| Android | 支持系统浏览器、Chrome和混合应用内嵌页面 | N/A | 未支持 | 
-| iOS | 支持Safari、Chrome和混合应用内嵌页面 | N/A | 未支持 | 
-| Windows | 支持Safari、Chrome和混合应用内嵌页面 | 支持IE和混合应用内嵌页面 | 未支持 | 
-| Mac | 未支持 | 未支持 | 未支持 |
+| WebView | 平台或操作系统 | 说明 | 相关实现代码 |
+| -- | -- | -- |  -- |
+| IE | Windows |  IE浏览器和内嵌页面使用，支持IE 7～11|  由QT4C提供 | 
+| Chrome | Windows | Chrome浏览器和内嵌页面使用 |  由QT4C提供 | 
+| TBS | Windows | QQ浏览器和相关内嵌页面使用 |  由QT4C提供 | 
+| CEF |  Windows  | Chromium内嵌页面使用 | 由QT4C提供 | 
+| Chrome | Linux |  Linux下的Headless模式的Chrome浏览器使用 | 由chrome-headless-browser提供|
+| AndroidBuildin | Android  | Android系统内置浏览器和内嵌页面使用 | 由[QT4A](https://github.com/Tencent/QT4A/blob/master/qt4a/andrcontrols.py)提供| 
+| X5 | Android | QQ移动浏览器和X5内核内嵌页面使用 | 由[QT4A](https://github.com/Tencent/QT4A/blob/master/qt4a/andrcontrols.py)提供| 
+| XWalk | Android | XWalk内核内嵌页面使用 | 由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/blob/master/wxmplib/util.py)提供| 
+| iOSBuildin | iOS | iOS系统内置浏览器和内嵌页面使用 | 由[QT4i](https://github.com/Tencent/QT4i/tree/master/qt4i/driver/web)提供| 
+| 微信小程序 | Android微信 | 微信小程序使用 |  由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)提供| 
+| Chrome | MacOS | Mac OS下的Chrome浏览器和内嵌页面使用 | 由QT4Mac提供 |
 
 QT4W也支持用户自定义扩展来支持更多的兼容性。更多信息请查阅《[扩展QT4W][3]》章节。
 
