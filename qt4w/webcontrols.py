@@ -1158,13 +1158,20 @@ class WebPage(ControlContainer, IWebPage):
         self.exec_script('scrollBy(%s, %s);' % (x, y))
 
     @encode_wrap
-    def exec_script(self, script):
-        '''在页面中执行JavaScript代码，并返回直接结果
-
-        :param script: 要执行的代码
-        :type script:  string
-        '''
-        return self._webdriver.eval_script(self._locator, script)
+    def exec_script(self, script, timeout=10):
+        """
+        在页面中执行JavaScript代码，并返回直接结果
+        :param script:要执行的代码
+        :type script:str
+        :param timeout:超时时间
+        :type timeout:int
+        :return:
+        """
+        # 当前看底层只有chrome支持js命令超时等待
+        if self._webdriver == 'chrome':
+            return self._webdriver.eval_script(self._locator, script, timeout)
+        else:
+            return self._webdriver.eval_script(self._locator, script)
 
     def get_element(self, locator, elem_cls=None):
         '''在页面中查找元素，返回第一个匹配的元素
