@@ -32,22 +32,22 @@ class TestXPath(unittest.TestCase):
     def test_break_step(self):
         xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
         steps=xp.break_steps()
-        self.assertEqual('//div[@id="google_shimpl"]', steps[0]);
-        self.assertEqual('//div[text()="test"]', steps[1]);
+        self.assertEqual('//div[@id="google_shimpl"]', steps[0])
+        self.assertEqual('//div[text()="test"]', steps[1])
 
     def test_break_frame(self):
          xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
          steps = xp.break_frames()
-         self.assertEqual('//div[@id="google_shimpl"]//div[text()="test"]', steps[0]);
+         self.assertEqual('//div[@id="google_shimpl"]//div[text()="test"]', steps[0])
          xp = XPath('//iframe[@id="google_shimpl"]//div[text()="test"]')
          steps = xp.break_frames()
-         self.assertEqual('//iframe[@id="google_shimpl"]', steps[0]);
+         self.assertEqual('//iframe[@id="google_shimpl"]', steps[0])
          xp = XPath('(//iframe[@id="google_shimpl"])//div[text()="test"]')
          steps = xp.break_frames()
-         self.assertEqual('(//iframe[@id="google_shimpl"])', steps[0]);
+         self.assertEqual('(//iframe[@id="google_shimpl"])', steps[0])
          xp = XPath('//frame[@id="main"]//iframe[@id="mainwindow"]//I[@class="spr nav1"]')
          steps = xp.break_frames()
-         self.assertEqual('//frame[@id="main"]', steps[0]);
+         self.assertEqual('//frame[@id="main"]', steps[0])
 
 if __name__ == '__main__':
     unittest.main()
