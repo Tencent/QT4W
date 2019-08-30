@@ -24,9 +24,9 @@ class TestXPath(unittest.TestCase):
 
     def test_node(self):
         xp=XPath('//div[@id="google_shimpl"]')
-        self.assertEqual("div", xp.Nodetest);
+        self.assertEqual("div", xp.Nodetest)
         xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
-        self.assertEqual("div", xp.Nodetest);
+        self.assertEqual("div", xp.Nodetest)
 
 
     def test_break_step(self):
