@@ -43,6 +43,13 @@ class IBrowser(object):
         '''
         raise NotImplementedError
 
+    def close(self):
+        '''
+        关闭浏览器，并清理数据
+        :return:
+        '''
+        raise NotImplementedError
+
 class Browser(IBrowser):
     '''对外的浏览器类
     '''
@@ -108,6 +115,14 @@ class Browser(IBrowser):
         page = self._browser.find_by_url(url, page_cls, timeout)
         if page == None: raise RuntimeError('Can\'t find page %s in browser %s' % (url, self._browser_name))
         return page
+
+    def close(self):
+        '''
+        关闭浏览器，并清理数据
+        :return:
+        '''
+        return self._browser.close()
+
 
 if __name__ == '__main__':
     pass
