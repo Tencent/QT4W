@@ -23,13 +23,15 @@ class IBrowser(object):
     '''浏览器接口类
     '''
 
-    def open_url(self, url, page_cls=None):
+    def open_url(self, url, page_cls=None, invisible_mode=False):
         '''打开一个url，返回page_cls类的实例
 
         :param url: 要打开页面的url
         :type url:  string
         :param page_cls: 要返回的具体WebPage类,为None表示返回WebPage实例
         :type page_cls: Class
+        :param invisible_mode: 是否开启隐身模式
+        :type invisible_mode: Bool
         '''
         raise NotImplementedError
 
@@ -85,13 +87,15 @@ class Browser(IBrowser):
         '''
         Browser.browser_dict[browser_name] = browser_cls_path
 
-    def open_url(self, url, page_cls=None):
+    def open_url(self, url, page_cls=None, invisible_mode=False):
         '''打开一个url，返回page_cls类的实例
 
         :param url: 要打开页面的url
         :type url:  string
         :param page_cls: 要返回的具体WebPage类,为None表示返回WebPage实例
         :type page_cls: Class
+        :param invisible_mode: 是否开启隐身模式
+        :type invisible_mode: Bool
         '''
         return self._browser.open_url(url, page_cls)
 
