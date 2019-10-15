@@ -495,7 +495,7 @@ class IEWebDriver(WebDriverBase):
         from qt4w.util import JavaScriptError
         try:
             return super(IEWebDriver, self).eval_script(frame_xpaths, script)
-        except JavaScriptError, e:
+        except JavaScriptError as e:
             err_msg = e.message
             err_msg = err_msg.split('\n')[0]  # 错误堆栈信息可能会有影响
             if ('TypeError' in err_msg or 'ReferenceError' in err_msg) and ('evaluate' in err_msg or 'XPathResult' in err_msg):
