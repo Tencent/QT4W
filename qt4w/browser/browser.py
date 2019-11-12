@@ -136,17 +136,21 @@ class Browser(IBrowser):
         :return:
         '''
         if hasattr(self._browser, 'close'):
-            return self._browser.close()
-        else:
-            logger.warn('[%s] Browser %s not implement close method' % (self.__class__.__name__, self._browser.__class__.__name__))
+            try:
+                return self._browser.close()
+            except NotImplementedError:
+                pass
+        logger.warn('[%s] Browser %s not implement close method' % (self.__class__.__name__, self._browser.__class__.__name__))
 
     def clear_data(self):
         '''清除浏览器数据
         '''
         if hasattr(self._browser, 'clear_data'):
-            return self._browser.clear_data()
-        else:
-            logger.warn('[%s] Browser %s not implement clear_data method' % (self.__class__.__name__, self._browser.__class__.__name__))
+            try:
+                return self._browser.clear_data()
+            except NotImplementedError:
+                pass
+        logger.warn('[%s] Browser %s not implement clear_data method' % (self.__class__.__name__, self._browser.__class__.__name__))
 
 
 if __name__ == '__main__':
