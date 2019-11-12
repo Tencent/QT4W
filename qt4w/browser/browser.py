@@ -52,19 +52,29 @@ class IBrowser(object):
         '''
         raise NotImplementedError
 
+    def clear_data(self):
+        '''清除浏览器数据
+        '''
+        raise NotImplementedError
+
+
 class Browser(IBrowser):
     '''对外的浏览器类
     '''
     browser_dict = {}  # 存储浏览器类型与浏览器类的对应关系
 
-    def __init__(self, browser_name=None):
+    def __init__(self, browser_name=None, clear_data=True):
         '''创建具体的Browser实例
 
         :param browser_name: 要创建的浏览器类型
-        :type browser_name:
+        :type  browser_name: string
+        :param clear_data:   是否清理浏览器数据
+        :type  clear_data:   bool
         '''
         self._browser_name = browser_name
         self._browser = self._get_browser_cls()
+        if clear_data:
+            self.clear_data()
 
     def _get_browser_cls(self):
         '''获取浏览器类
@@ -125,7 +135,22 @@ class Browser(IBrowser):
         关闭浏览器，并清理数据
         :return:
         '''
-        return self._browser.close()
+        if hasattr(self._browser, 'close'):
+            try:
+                return self._browser.close()
+            except NotImplementedError:
+                pass
+        logger.warn('[%s] Browser %s not implement close method' % (self.__class__.__name__, self._browser.__class__.__name__))
+
+    def clear_data(self):
+        '''清除浏览器数据
+        '''
+        if hasattr(self._browser, 'clear_data'):
+            try:
+                return self._browser.clear_data()
+            except NotImplementedError:
+                pass
+        logger.warn('[%s] Browser %s not implement clear_data method' % (self.__class__.__name__, self._browser.__class__.__name__))
 
 
 if __name__ == '__main__':
