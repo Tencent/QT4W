@@ -13,7 +13,7 @@
 # governing permissions and limitations under the License.
 #
 
-'''Webkit WebDrvier实现
+'''FireFox WebDrvier实现
 '''
 
 
