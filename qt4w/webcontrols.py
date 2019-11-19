@@ -16,7 +16,7 @@
 '''
 
 
-from __future__ import absolute_import,division
+from __future__ import absolute_import, division
 import copy
 import re
 import time
@@ -24,6 +24,7 @@ from qt4w.util import Deprecated, TimeoutError, lazy_init, encode_wrap
 from qt4w import XPath
 from six.moves import xrange
 import six
+
 
 class IWebPage(object):
     '''WebPage接口定义
@@ -184,7 +185,6 @@ class IWebPage(object):
         '''
         raise NotImplementedError
 
-
     def pull_up_refresh(self):
         '''上拉刷新
         '''
@@ -210,6 +210,7 @@ class IWebPage(object):
         '''获取page页面截图
         '''
         raise NotImplementedError
+
 
 class IWebElement(object):
     '''WebElement接口定义
@@ -490,6 +491,7 @@ class IWebElement(object):
         '''
         raise NotImplementedError
 
+
 class ControlContainer(object):
     '''控件容器基类
     '''
@@ -577,7 +579,8 @@ class ControlContainer(object):
         ui_control = self._ui_map[name]
         ui_type = self.ui_control_type if self.ui_control_type else WebElement
         if isinstance(ui_control, dict):
-            if 'type' in ui_control: ui_type = ui_control['type']
+            if 'type' in ui_control:
+                ui_type = ui_control['type']
             if not issubclass(ui_type, (WebElement, UIListBase)):
                 ui_control.pop('type')
                 instance = ui_type(self, name, **ui_control)
@@ -596,6 +599,7 @@ class ControlContainer(object):
         '''返回MetisView
         '''
         return MetisView(self)
+
 
 class WebElement(ControlContainer, IWebElement):
     '''IWebElement实现
@@ -620,9 +624,11 @@ class WebElement(ControlContainer, IWebElement):
             self._locators = root._locators + loc
         else:
             self._locators = root._locators[:-1]
-            self._locators += XPath(root._locators[-1] + locator).break_frames()
+            self._locators += XPath(root._locators[-1] +
+                                    locator).break_frames()
 
-        self._attrs = WebElementAttributes(self._getattr, self._setattr, self._listattr)
+        self._attrs = WebElementAttributes(
+            self._getattr, self._setattr, self._listattr)
         self._styles = WebElementStyles(self._getstyle)
 
     def __str__(self):
@@ -683,7 +689,8 @@ class WebElement(ControlContainer, IWebElement):
         '''
         time0 = time.time()
         while time.time() - time0 < timeout:
-            if self.exist(): return
+            if self.exist():
+                return
             time.sleep(interval)
         self._webdriver.get_element(self._locators)
 
@@ -706,18 +713,14 @@ class WebElement(ControlContainer, IWebElement):
         '''
         return self._webdriver.get_elem_rect(self._locators, False)
 
-
     def screenshot(self):
         '''设置控件截图
         '''
         if not self.visible:
             self._webdriver.scroll_to_visible(self._locators)
-        page=self.page.screenshot()
-        left=self.rect[0]
-        top=self.rect[1]
-        width=self.rect[2]
-        heigth=self.rect[3]
-        return page.crop(box=(left,top,left+width,top+heigth))
+        image = self.page.screenshot()
+        left, top, width, height = self.rect
+        return image.crop((left, top, left + width, top + height))
 
     @property
     def BoundingRect(self):
@@ -731,25 +734,29 @@ class WebElement(ControlContainer, IWebElement):
     def displayed(self):
         '''元素是否显示在页面中（Web层可见，肉眼不一定可见）
         '''
-        if self.styles['display'] == 'none': return False
-        if self.styles['visibility'] == 'hidden': return False  # 只有为hidden的时候才认为不可见
+        if self.styles['display'] == 'none':
+            return False
+        if self.styles['visibility'] == 'hidden':
+            return False  # 只有为hidden的时候才认为不可见
         self_rect = self.rect
-        if self_rect[2] == 0 or self_rect[3] == 0: return False
+        if self_rect[2] == 0 or self_rect[3] == 0:
+            return False
         return True
 
     @property
     def visible(self):
         '''元素是否视觉可见
         '''
-        if not self.displayed: return False
+        if not self.displayed:
+            return False
         self_rect = self.rect
         root_rect = self._webview.visible_rect
         root_rect = [0, 0, root_rect[2], root_rect[3]]
 
         if self_rect[0] >= root_rect[0] and \
-            self_rect[0] + self_rect[2] <= root_rect[0] + root_rect[2] and \
-            self_rect[1] >= root_rect[1] and \
-            self_rect[1] + self_rect[3] <= root_rect[1] + root_rect[3]:
+                self_rect[0] + self_rect[2] <= root_rect[0] + root_rect[2] and \
+                self_rect[1] >= root_rect[1] and \
+                self_rect[1] + self_rect[3] <= root_rect[1] + root_rect[3]:
             return True
         return False
 
@@ -803,7 +810,7 @@ class WebElement(ControlContainer, IWebElement):
         '''高亮
         '''
         self._webdriver.highlight(self._locators)
-        time.sleep(0.5) # wait for highlight
+        time.sleep(0.5)  # wait for highlight
 
     def scroll(self, x, y):
         '''滚动元素
@@ -823,7 +830,8 @@ class WebElement(ControlContainer, IWebElement):
         :paran elem_cls: 返回的元素类型
         :type elem_cls:  class
         '''
-        if elem_cls == None: elem_cls = WebElement
+        if elem_cls == None:
+            elem_cls = WebElement
         return elem_cls(self, locator)
 
     def get_elements(self, locator, elem_cls=None):
@@ -847,11 +855,12 @@ class WebElement(ControlContainer, IWebElement):
         '''
         time0 = time.time()
         while time.time() - time0 < timeout:
-            if self.visible: return
+            if self.visible:
+                return
             time.sleep(interval)
         else:
-            raise RuntimeError('元素：%s 在%s秒内不可见' % (''.join(self._locators), timeout))
-
+            raise RuntimeError('元素：%s 在%s秒内不可见' %
+                               (''.join(self._locators), timeout))
 
     def wait_for_attribute(self, name, value, timeout=10, interval=0.5):
         '''暂停程序执行，直到当前元素的指定属性变为特定值
@@ -869,9 +878,11 @@ class WebElement(ControlContainer, IWebElement):
         while time.time() - time0 < timeout:
             real_value = self.attributes[name]
             real_value = real_value.replace('"', '')
-            if real_value == value:return
+            if real_value == value:
+                return
             time.sleep(interval)
-        raise TimeoutError('等待控件属性%s超时：期望值："%s"，当前值："%s"' % (name, value, self.inner_text))
+        raise TimeoutError('等待控件属性%s超时：期望值："%s"，当前值："%s"' %
+                           (name, value, self.inner_text))
 
     def wait_for_style(self, name, value, timeout=10, interval=0.5):
         '''暂停程序执行，直到当前元素的指定样式变为特定值
@@ -899,9 +910,11 @@ class WebElement(ControlContainer, IWebElement):
         '''
         time0 = time.time()
         while time.time() - time0 < timeout:
-            if self.inner_text == text:return
+            if self.inner_text == text:
+                return
             time.sleep(interval)
-        raise TimeoutError('等待控件文本超时：期望值："%s"，当前值："%s"' % (text, self.inner_text))
+        raise TimeoutError('等待控件文本超时：期望值："%s"，当前值："%s"' %
+                           (text, self.inner_text))
 
     def wait_for_value(self, value, timeout=10, interval=0.5):
         '''暂停程序执行，直到当前元素的InnerText变为特定值
@@ -914,7 +927,6 @@ class WebElement(ControlContainer, IWebElement):
         :type interval: int或float
         '''
 
-
     def _pre_click(self, x_offset=None, y_offset=None, highlight=True):
         '''点击前的处理
         '''
@@ -922,7 +934,8 @@ class WebElement(ControlContainer, IWebElement):
         timeout = 5
         time0 = time.time()
         while time.time() - time0 < timeout:
-            if self.displayed: break
+            if self.displayed:
+                break
             time.sleep(0.1)
         else:
             raise TimeoutError('控件：%s 在%d秒内不可见' % (self, timeout))
@@ -934,13 +947,16 @@ class WebElement(ControlContainer, IWebElement):
         while time.time() - time0 < 2:
             time.sleep(0.5)  # 等待元素位置发生变化
             new_rect = self.rect
-            if new_rect != rect: break
-            self._webdriver.scroll_to_visible(self._locators) # 避免某些情况下滑动失败
+            if new_rect != rect:
+                break
+            self._webdriver.scroll_to_visible(self._locators)  # 避免某些情况下滑动失败
 
-        if highlight: self.highlight()
+        if highlight:
+            self.highlight()
         rect = self.rect  # 此时坐标可能发生变化，需要重新获取
         outer_rect = self._webview.visible_rect
-        outer_rect = [0, 0, outer_rect[2], outer_rect[3]]  # 换算成以WebView左上角为原点的坐标
+        # 换算成以WebView左上角为原点的坐标
+        outer_rect = [0, 0, outer_rect[2], outer_rect[3]]
         # 计算交集，避免计算出的坐标为窗口外面
         left = max(rect[0], outer_rect[0])
         top = max(rect[1], outer_rect[1])
@@ -1020,8 +1036,10 @@ class WebElement(ControlContainer, IWebElement):
         :type y:  int或float
         '''
         screen_size = self._webdriver.get_screen_size()
-        if abs(x) > screen_size[0]: x = screen_size[0] * abs(x) / x
-        if abs(y) > screen_size[1]: y = screen_size[1] * abs(y) / y
+        if abs(x) > screen_size[0]:
+            x = screen_size[0] * abs(x) / x
+        if abs(y) > screen_size[1]:
+            y = screen_size[1] * abs(y) / y
 
         rect = self.rect
         # 计算与屏幕的交集
@@ -1038,7 +1056,8 @@ class WebElement(ControlContainer, IWebElement):
         mid_x = rect[0] + rect[2] / 2
         mid_y = rect[1] + rect[3] / 2
 
-        self._webdriver.drag_element(self._locators, mid_x - x / 2, mid_y - y / 2, mid_x + x / 2, mid_y + y / 2)
+        self._webdriver.drag_element(
+            self._locators, mid_x - x / 2, mid_y - y / 2, mid_x + x / 2, mid_y + y / 2)
         time.sleep(1)  # 等待滚动完成
 
     def send_keys(self, keys):
@@ -1055,6 +1074,7 @@ class WebElement(ControlContainer, IWebElement):
         '''
         raise NotImplementedError
 
+
 class WebPage(ControlContainer, IWebPage):
     '''IWebPage接口实现
     '''
@@ -1063,7 +1083,8 @@ class WebPage(ControlContainer, IWebPage):
 
     def __init__(self, webview_or_webpage, locator=None, wait_for_ready=True):
         ControlContainer.__init__(self)
-        if locator is None: locator = []
+        if locator is None:
+            locator = []
         if isinstance(webview_or_webpage, WebPage):
             self._webview = webview_or_webpage._webview
             self._locator = webview_or_webpage._locator
@@ -1075,7 +1096,8 @@ class WebPage(ControlContainer, IWebPage):
                 self._webdriver = self._webview.webdriver_class(self._webview)
             except NotImplementedError:
                 self._webdriver = self._webview  # remove later
-        if wait_for_ready: self.wait_for_ready()
+        if wait_for_ready:
+            self.wait_for_ready()
 
     def __str__(self):
         return '<%s object at 0x%X [title=%s url=%s]>' % (self.__class__.__name__, id(self), self.title, self.url)
@@ -1142,7 +1164,8 @@ class WebPage(ControlContainer, IWebPage):
         '''
         time0 = time.time()
         while time.time() - time0 < timeout:
-            if self.ready_state == 'complete': return
+            if self.ready_state == 'complete':
+                return
             time.sleep(0.5)
         else:
             raise RuntimeError('页面未在%d秒内加载完成' % timeout)
@@ -1174,7 +1197,8 @@ class WebPage(ControlContainer, IWebPage):
         :paran elem_cls: 返回的元素类型
         :type elem_cls:  class
         '''
-        if elem_cls == None: elem_cls = WebElement
+        if elem_cls == None:
+            elem_cls = WebElement
         return elem_cls(self, locator)
 
     def get_elements(self, locator, elem_cls=None):
@@ -1190,14 +1214,16 @@ class WebPage(ControlContainer, IWebPage):
         child_locators = XPath(locator).break_frames()
         locators.extend(child_locators)
         elem_count = self._webdriver.get_element_count(locators)
+
         def get_elem(index):
             if len(child_locators) == 1:
                 loc = '(%s)[%d]' % (locator, index + 1)
             else:
-                loc = '%s(%s)[%d]' % (''.join(child_locators[:-1]), child_locators[-1], index + 1)
+                loc = '%s(%s)[%d]' % (''.join(child_locators[:-1]),
+                                      child_locators[-1], index + 1)
             return self.get_element(loc, elem_cls)
 
-        return LazyDict(get_elem, lister=lambda:xrange(elem_count))
+        return LazyDict(get_elem, lister=lambda: xrange(elem_count))
 
     def pull_down_refresh(self):
         '''下拉刷新
@@ -1210,7 +1236,7 @@ class WebPage(ControlContainer, IWebPage):
         self._webview.drag(x1, y1, x2, y2)  # 从纵坐标1/4处滑倒3/4处
 
     def pull_up_refresh(self):
-        '''上拉刷新
+        '''上拉刷新 
         '''
         self.exec_script('scroll(0,document.body.scrollHeight);')  # 滑动到底部
         rect = self._webview.visible_rect
@@ -1236,19 +1262,24 @@ class WebPage(ControlContainer, IWebPage):
         time0 = time.time()
         while timeout == None or time.time() - time0 < timeout:
             result = self._webdriver.read_console_log(self._locator)
-            if result: return result
+            if result:
+                return result
             time.sleep(0.1)
         else:
             raise TimeoutError('Read console log timeout')
 
     def screenshot(self):
         '''获取page页面截图
+
+        :return: PIL.Image
         '''
-        self._webview.screenshot()
+        return self._webview.screenshot()
+
 
 class FrameElement(WebElement):
     '''frame/iframe元素
     '''
+
     def __init__(self, root, locator):
         loc = XPath(locator).break_frames()[-1]
         if not ('/iframe' in loc or '/frame' in loc):
@@ -1296,6 +1327,7 @@ class InputElement(WebElement):
         self._webdriver.fire_event(self._locators, 'input')
         self._webdriver.fire_event(self._locators, 'change')
 
+
 class SelectElement(WebElement):
     '''select元素
     '''
@@ -1325,7 +1357,6 @@ class SelectElement(WebElement):
         if isinstance(option, (str, six.text_type)):
             # change to option index
             option = self.options.index(option)
-
         self._webdriver.set_property(self._locators, 'selectedIndex', option)
         self._webdriver.fire_event(self._locators, 'change')
 
@@ -1344,9 +1375,11 @@ class UIListBase(object):
     def _get_elements(self):
         '''获取元素列表
         '''
-        if self._elements: return self._elements
+        if self._elements:
+            return self._elements
         result = []
-        elements = list(self._root.get_elements(self._locator, self.ui_control_type))
+        elements = list(self._root.get_elements(
+            self._locator, self.ui_control_type))
         for elem in elements:
             elem._ui_map.update(self._ui_map)
             elem._parent = self._root  # elem._root是WebPage对象
@@ -1370,8 +1403,10 @@ class UIListBase(object):
         '''
         if not isinstance(index, (int, six.integer_types)):
             raise TypeError('索引值必须为整数：%r' % index)
-        if index < 0: index += len(self)
-        if index >= len(self): raise IndexError('索引越界，数组长度为：%d，当前索引值为： %d' % (len(self), index))
+        if index < 0:
+            index += len(self)
+        if index >= len(self):
+            raise IndexError('索引越界，数组长度为：%d，当前索引值为： %d' % (len(self), index))
         elem = self._get_elements()[index]
         return elem
 
@@ -1381,7 +1416,8 @@ class UIListBase(object):
         :param condition: 过滤条件
         :type condition:  dict
         '''
-        if not condition: raise RuntimeError('过滤条件不能为空')
+        if not condition:
+            raise RuntimeError('过滤条件不能为空')
         pattern = re.compile(r'^(\w+)\[(.+)\]$')
         for elem in self._get_elements():
             equal_flag = True
@@ -1396,19 +1432,24 @@ class UIListBase(object):
                     attr_name = ret.group(1)
                     index = ret.group(2)[1:-1]
                 if not hasattr(child_elem, attr_name):
-                    raise RuntimeError('控件：%s 没有属性：%s' % (child_elem, attr_name))
+                    raise RuntimeError('控件：%s 没有属性：%s' %
+                                       (child_elem, attr_name))
                 value = getattr(child_elem, attr_name)
-                if index: value = value.__getitem__(index)
+                if index:
+                    value = value.__getitem__(index)
                 if value != condition[key]:
                     equal_flag = False
                     break
-            if equal_flag: return elem
+            if equal_flag:
+                return elem
         raise RuntimeError('未找到满足条件：%s 的子控件' % condition)
+
 
 def ui_list(control_cls):
     '''列表类型
     '''
     return type('%sList' % control_cls.__name__, (UIListBase,), {'ui_control_type': control_cls})
+
 
 class MetisView(object):
     '''实现IMetisView接口
@@ -1445,14 +1486,17 @@ class MetisView(object):
         '''
         image = self._webview.screenshot()
         if self._elem != None:
-            image = image.crop(self.rect)
+            left, top, width, height = self.rect
+            image = image.crop((left, top, left + width, top + height))
         return image
 
     def _get_position(self, offset_x=None, offset_y=None):
         '''
         '''
-        if offset_x == None: offset_x = 0.5
-        if offset_y == None: offset_y = 0.5
+        if offset_x == None:
+            offset_x = 0.5
+        if offset_y == None:
+            offset_y = 0.5
         rect = self.rect
         x = rect[0] + int(rect[2] * offset_x)
         y = rect[1] + int(rect[3] * offset_y)
@@ -1488,6 +1532,6 @@ class MetisView(object):
         x, y = self._get_position(offset_x, offset_y)
         self._webview.long_click(x, y)
 
+
 if __name__ == '__main__':
     pass
-

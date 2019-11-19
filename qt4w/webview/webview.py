@@ -16,7 +16,6 @@
 '''
 
 
-
 class IWebView(object):
     '''IWebView接口
     '''
@@ -51,6 +50,7 @@ class IWebView(object):
 
     def screenshot(self):
         '''当前WebView的截图
+
         :return: PIL.Image
         '''
         raise NotImplementedError
@@ -144,23 +144,4 @@ class IWebView(object):
         :type  file_path: str
         '''
         raise NotImplementedError
-
-# class WebViewBase(IWebView):
-#     '''WebView基类，实现一些公共方法
-#     '''
-#
-#     def _handle_result(self, result, frame_xpaths):
-#         '''处理执行JavaScript的结果
-#
-#         :param result: 要处理的数据
-#         :type  result: string
-#         :param frame_xpaths: 执行js所在frame的xpath
-#         :type  frame_xpaths: list
-#         '''
-#         from qt4w.util import JavaScriptError
-#         if result[0] == 'S': return result[1:]
-#         elif result[0] == 'E':
-#             raise JavaScriptError(frame_xpaths, result[1:])
-#         else:
-#             raise ValueError('执行JavaScript返回结果错误：%r' % result)
 
