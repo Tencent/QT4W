@@ -12,7 +12,8 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-'''IWebWiew接口定义及Windows平台上的实现
+
+'''IWebWiew接口定义
 '''
 
-
+from .webview import IWebView

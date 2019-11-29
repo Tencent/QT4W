@@ -24,6 +24,7 @@ from qt4w.util import logger, general_encode, unicode_decode, ControlNotFoundErr
 class IWebDriver(object):
     '''IWebDriver接口
     '''
+
     def __init__(self, webview):
         '''构造函数
 
@@ -120,6 +121,7 @@ class IWebDriver(object):
         '''
         raise NotImplementedError
 
+
 class WebDriverBase(IWebDriver):
     '''WebDriver基类
     '''
@@ -209,11 +211,14 @@ class WebDriverBase(IWebDriver):
         if (cnt){
             cnt--;
             if(window.console) console.log('show' + cnt);
-            setTimeout("qt4w_driver_lib.showDiv(" + cnt + ")", 100);
+            setTimeout("qt4w_driver_lib.showDiv(" + cnt + ")", 200);
         }
     },
     
     highlight: function(node){
+        if (!this.bd0) {
+            this.initHighlightDiv();
+        }
         var rect = node.getBoundingClientRect();
         var left= rect.left;
         var top = rect.top;
@@ -221,18 +226,14 @@ class WebDriverBase(IWebDriver):
         var height = node.offsetHeight;
         if(window.console) console.log(left+','+top+','+width+','+height);
         
-        this.bd0.setAttribute("style", "border:solid 1px red;"
-            + "left:" + (left) + "px;top:" + (top) + "px;z-index:32767;"
-            + "width:" + (width) + "px;height:0px;position:fixed;");
-        this.bd1.setAttribute("style", "border:solid 1px red;"
-            + "left:" + (left) + "px;top:" + (top) + "px;z-index:32767;"
-            + "width:0px;height:" + (height) + "px;position:fixed;");
-        this.bd2.setAttribute("style", "border:solid 1px red;"
-            + "left:" + (left+width) + "px;top:" + (top) + "px;z-index:32767;"
-            + "width:0px;height:" + (height) + "px;position:fixed;");
-        this.bd3.setAttribute("style", "border:solid 1px red;"
-            + "left:" + (left) + "px;top:" + (top+height) + "px;z-index:32767;"
-            + "width:" + (width) + "px;height:0px;position:fixed;");
+        this.bd0.setAttribute("style", "left:" + (left - 1) + "px;top:" + (top - 1) + "px;z-index:32767;"
+            + "width:" + (width + 2) + "px;height:2px;position:fixed;background-color: red");
+        this.bd1.setAttribute("style", "left:" + (left - 1) + "px;top:" + (top - 1) + "px;z-index:32767;"
+            + "width:2px;height:" + (height) + "px;position:fixed;;background-color: red");
+        this.bd2.setAttribute("style", "left:" + (left + width - 1) + "px;top:" + (top) + "px;z-index:32767;"
+            + "width:2px;height:" + (height) + "px;position:fixed;;background-color: red");
+        this.bd3.setAttribute("style", "left:" + (left - 1) + "px;top:" + (top + height - 1) + "px;z-index:32767;"
+            + "width:" + (width + 2) + "px;height:2px;position:fixed;;background-color: red");
         //console.log('style'+this.bd0.getAttribute('style')+'');
         this.showDiv(3);
     },
@@ -294,7 +295,7 @@ class WebDriverBase(IWebDriver):
     }
     
     };
-    qt4w_driver_lib.initHighlightDiv();
+
     if (window.qt4w_hook_console) qt4w_driver_lib.hookConsole();
     '''
 
@@ -342,7 +343,8 @@ class WebDriverBase(IWebDriver):
     def _break_xpaths(self, elem_xpaths):
         '''将xpath数组分隔成frame_xpaths和elem_xpath
         '''
-        if len(elem_xpaths) < 1: raise ValueError('xpath is []')
+        if len(elem_xpaths) < 1:
+            raise ValueError('xpath is []')
         frame_xpaths = elem_xpaths[:-1]
         self._xpaths_encode(frame_xpaths)
         elem_xpath = elem_xpaths[-1]
@@ -354,13 +356,16 @@ class WebDriverBase(IWebDriver):
         '''
         try:
             from tuia.env import run_env, EnumEnvType
-            if run_env != EnumEnvType.Lab: return ''
+            if run_env != EnumEnvType.Lab:
+                return ''
         except ImportError:
             pass
 
         result = '\nCurrent DOM Tree：\n'
-        dom_tree = self.eval_script(frame_xpaths, 'document.documentElement.outerHTML;')
-        if isinstance(dom_tree, six.text_type): dom_tree = dom_tree.encode('utf8')
+        dom_tree = self.eval_script(
+            frame_xpaths, 'document.documentElement.outerHTML;')
+        if isinstance(dom_tree, six.text_type):
+            dom_tree = dom_tree.encode('utf8')
         result += dom_tree
         return result
 
@@ -420,7 +425,8 @@ class WebDriverBase(IWebDriver):
         # 优先使用name，没有name使用id
         result = self.eval_script(frame_xpaths[:-1], js)
         pos = result.find(',')
-        if pos < 0: raise RuntimeError('Get frame info failed')
+        if pos < 0:
+            raise RuntimeError('Get frame info failed')
         return result[:pos], result[pos + 1:]
 
     def get_element(self, elem_xpaths):
@@ -462,7 +468,8 @@ class WebDriverBase(IWebDriver):
             node.getAttribute('%s');
         ''' % (elem_xpath, attr_name)
         result = self.eval_script(frame_xpaths, js)
-        if result == 'undefined': result = None
+        if result == 'undefined':
+            result = None
         return result
 
     def set_attribute(self, elem_xpaths, attr_name, value):
@@ -500,7 +507,8 @@ class WebDriverBase(IWebDriver):
         result = self._get_elem_rect(frame_xpaths, elem_xpath)
         if not rav and frame_xpaths:
             while frame_xpaths:
-                result1 = self._get_elem_rect(frame_xpaths[:-1], frame_xpaths[-1])
+                result1 = self._get_elem_rect(
+                    frame_xpaths[:-1], frame_xpaths[-1])
                 for i in range(2):
                     result[i] += result1[i]
                 frame_xpaths = frame_xpaths[:-1]
@@ -725,4 +733,3 @@ node.dispatchEvent(evt);
 
 if __name__ == '__main__':
     pass
-

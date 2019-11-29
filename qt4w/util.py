@@ -12,13 +12,16 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
+
 '''QT4W公共库
 '''
 
 from __future__ import absolute_import, print_function
-import sys, os
+import sys
+import os
 import logging as logger
 import six
+
 
 class QT4WRuntimeError(RuntimeError):
     '''QT4W运行时错误
@@ -30,9 +33,11 @@ class QT4WRuntimeError(RuntimeError):
         '''
         return self.args[0]
 
+
 class JavaScriptError(RuntimeError):
     '''执行JavaScript报错
     '''
+
     def __init__(self, frame, err_msg):
         super(JavaScriptError, self).__init__(err_msg)
         self._frame = frame
@@ -51,6 +56,7 @@ class JavaScriptError(RuntimeError):
     def __str__(self):
         return '%s%s' % (self.frame, self._err_msg)
 
+
 class ControlNotFoundError(QT4WRuntimeError):
     '''Web元素未找到
     '''
@@ -62,10 +68,12 @@ class ControlAmbiguousError(QT4WRuntimeError):
     '''
     pass
 
+
 class TimeoutError(QT4WRuntimeError):
     '''超时错误
     '''
     pass
+
 
 class LazyDict(object):
     '''类字典容器，本身不存储数据，只在需要时调用相应函数实现读写操作'''
@@ -103,18 +111,23 @@ class LazyDict(object):
             ret += "%s: %s, " % (repr(key), repr(self[key]))
         return ret[:-2] + "}"
 
+
 class WebElementAttributes(LazyDict):
     '''供WebElement的Attributes属性使用的类字典容器'''
+
     def __delitem__(self):
         raise Exception("Attribute cannot be deleted.")
 
+
 class WebElementStyles(LazyDict):
     '''供WebElement的Styles属性使用的类字典容器'''
+
     def __setitem__(self, key, value):
         raise Exception("Style cannot be set.")
 
     def __delitem__(self):
         raise Exception("Style cannot be deleted.")
+
 
 def general_encode(s):
     '''字符串通用编码处理
@@ -127,12 +140,14 @@ def general_encode(s):
         s = s.decode('utf8')
     return s
 
+
 def unicode_decode(s):
     '''将字符串解码为unicode编码
     '''
     if six.PY2 or isinstance(s, (bytes,)):
         s = s.decode('utf8')
     return s
+
 
 def encode_wrap(func):
     '''处理函数返回值编码
@@ -142,19 +157,21 @@ def encode_wrap(func):
         return general_encode(ret)
     return wrap_func
 
+
 class Deprecated(object):
     '''废弃函数包装
     '''
+
     def __init__(self, new_func):
         self._new_func = new_func
 
     def __call__(self, func):
         def wrap_func(this, *args, **kwargs):
-            # print 'call', func
             frame = sys._getframe(1)
             code = frame.f_code
             file_name = os.path.split(code.co_filename)[-1]
-            print >> sys.stderr, '[Warning] method [%s] is deprecated, called in [%s:%s], pls use [%s] instead' % (func.__name__, file_name, code.co_name, self._new_func)
+            print('[Warning] method [%s] is deprecated, called in [%s:%s], pls use [%s] instead' % (
+                func.__name__, file_name, code.co_name, self._new_func), file=sys.stderr)
             return getattr(this, self._new_func)(*args, **kwargs)
 
         if func.__class__.__name__ == 'function':
@@ -165,16 +182,19 @@ class Deprecated(object):
                     frame = sys._getframe(1)
                     code = frame.f_code
                     file_name = os.path.split(code.co_filename)[-1]
-                    print >> sys.stderr, '[Warning] property [%s] is deprecated, called in [%s:%s], pls use [%s] instead' % (fget.__name__, file_name, code.co_name, self._new_func)
+                    print('[Warning] property [%s] is deprecated, called in [%s:%s], pls use [%s] instead' % (
+                        fget.__name__, file_name, code.co_name, self._new_func), file=sys.stderr)
                     return getattr(this, self._new_func)
                 return _wrap_fget
             return property(prop_fget(func.fget), func.fset, func.fdel)
         else:
             raise NotImplementedError(func.__class__.__name__)
 
+
 def lazy_init(func):
     '''懒初始化
     '''
+
     def _wrap_func(self, *args, **kwargs):
         if not hasattr(self, '__inited') or self.__inited != True:
             self.post_init()
@@ -182,9 +202,11 @@ def lazy_init(func):
         return func(self, *args, **kwargs)
     return _wrap_func
 
+
 class Rect(object):
     '''控件坐标区域
     '''
+
     def __init__(self, rect):
         self._rect = rect  # [left, top, width, height]
 
@@ -248,6 +270,7 @@ class Rect(object):
         '''
         raise NotImplementedError
 
+
 class Frame(object):
     '''frame element
     '''
@@ -283,6 +306,7 @@ class Frame(object):
                 return child
         return None
 
+
 class FrameSelector(object):
     '''Frame定位
     '''
@@ -302,7 +326,8 @@ class FrameSelector(object):
         :type frame_xpaths: list
         :return: Frame object
         '''
-        if not frame_xpaths: return self._root_frame
+        if not frame_xpaths:
+            return self._root_frame
         frame = self._root_frame
         for i in range(len(frame_xpaths)):
             name, url = self._webdriver._get_frame_info(frame_xpaths[:i + 1])
@@ -312,5 +337,119 @@ class FrameSelector(object):
                 return None
         return frame
 
-if __name__ == '__main__':
-    pass
+
+class KeyCode(object):
+    '''按键
+    '''
+
+    def __init__(self, name, code):
+        self._name = name
+        self._code = code
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def code(self):
+        return self._code
+
+    def __str__(self):
+        return '<KeyCode object at 0x%.8x %s %d>' % (id(self), self._name, self._code)
+
+    def __eq__(self, other):
+        if isinstance(other, int):
+            return self._code == other
+        elif isinstance(other, KeyCode):
+            return self._code == other.code
+        return False
+
+
+class EnumKeyCode(object):
+    '''按键定义
+    '''
+
+    CTRL = ('Control', 17)
+    ALT = ('Alt', 18)
+    SHIFT = ('Shift', 16)
+    ENTER = ('Enter', 13)
+    ESC = ('Escape', 27)
+    BACKSPACE = ('Backspace', 8)
+    DELETE = ('Delete', 46)
+    HOME = ('Home', 36)
+    END = ('End', 35)
+    INSERT = ('Insert', 45)
+    PAGEUP = ('PageUp', 33)
+    PAGEDOWN = ('PageDown', 34)
+    UP = ('ArrowUp', 38)
+    DOWN = ('ArrowDown', 40)
+    LEFT = ('ArrowLeft', 37)
+    RIGHT = ('ArrowRight', 39)
+    TAB = ('Tab', 9)
+    F1 = ('F1', 112)
+    F2 = ('F2', 113)
+    F3 = ('F3', 114)
+    F4 = ('F4', 115)
+    F5 = ('F5', 116)
+    F6 = ('F6', 117)
+    F7 = ('F7', 118)
+    F8 = ('F8', 119)
+    F9 = ('F9', 120)
+    F10 = ('F10', 121)
+    F11 = ('F11', 122)
+    F12 = ('F12', 123)
+
+    @staticmethod
+    def init():
+        for code in range(ord('A'), ord('Z') + 1):
+            setattr(EnumKeyCode, chr(code), ('Key' + chr(code), code))
+
+    @staticmethod
+    def parse(text):
+        temp_text = ''
+        temp_key = ''
+        is_key = False
+        is_control_key = False
+        result = []
+        for c in text:
+            if is_control_key:
+                c = c.upper()
+                if c >= 'A' and c <= 'Z':
+                    result.append(getattr(EnumKeyCode, c))
+                else:
+                    raise NotImplementedError('Unsupported keys %s' % text)
+                is_control_key = False
+            elif is_key:
+                if c == '{':
+                    temp_text += '{' + temp_key
+                    temp_key = ''
+                elif c == '}':
+                    if hasattr(EnumKeyCode, temp_key):
+                        if temp_text:
+                            result.append(temp_text)
+                            temp_text = ''
+                        result.append(KeyCode(*getattr(EnumKeyCode, temp_key)))
+                        if temp_key in ('CTRL', 'ALT', 'SHIFT'):
+                            is_control_key = True
+                    else:
+                        temp_text += '{' + temp_key + '}'
+                    temp_key = ''
+                    is_key = False
+                else:
+                    temp_key += c
+            elif c == '{':
+                is_key = True
+            else:
+                temp_text += c
+        if is_key:
+            # 未闭合的`{`
+            temp_text += '{' + temp_key
+            temp_key = ''
+        if not result:
+            return temp_text
+        if temp_text:
+            result.append(temp_text)
+        return result
+
+
+EnumKeyCode.init()
