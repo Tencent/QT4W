@@ -945,7 +945,7 @@ class WebElement(ControlContainer, IWebElement):
         rect = self.rect
         time0 = time.time()
         while time.time() - time0 < 2:
-            time.sleep(0.5)  # 等待元素位置发生变化
+            time.sleep(0.2)  # 等待元素位置发生变化
             new_rect = self.rect
             if new_rect != rect:
                 break
@@ -954,6 +954,7 @@ class WebElement(ControlContainer, IWebElement):
         if highlight:
             self.highlight()
         rect = self.rect  # 此时坐标可能发生变化，需要重新获取
+
         outer_rect = self._webview.visible_rect
         # 换算成以WebView左上角为原点的坐标
         outer_rect = [0, 0, outer_rect[2], outer_rect[3]]
@@ -1323,6 +1324,7 @@ class InputElement(WebElement):
         :param val: 新设置的value
         :type  val: string
         '''
+        self.highlight()
         self._webdriver.set_property(self._locators, 'value', str(val))
         self._webdriver.fire_event(self._locators, 'input')
         self._webdriver.fire_event(self._locators, 'change')
@@ -1354,6 +1356,7 @@ class SelectElement(WebElement):
         :param option: 要选中的选项索引或显示的内容
         :type  option: int/string
         '''
+        self.highlight()
         if isinstance(option, (str, six.text_type)):
             # change to option index
             option = self.options.index(option)
