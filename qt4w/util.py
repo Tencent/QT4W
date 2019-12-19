@@ -293,6 +293,9 @@ class Frame(object):
     def url(self):
         return self._url
 
+    def __str__(self):
+        return '<Frame object id=%s name=%s url=%s at 0x%x>' % (self._id, self._name, self._url, id(self))
+
     def add_child(self, frame):
         '''添加子frame
         '''
