@@ -364,8 +364,7 @@ class WebDriverBase(IWebDriver):
         result = '\nCurrent DOM Tree：\n'
         dom_tree = self.eval_script(
             frame_xpaths, 'document.documentElement.outerHTML;')
-        if isinstance(dom_tree, six.text_type):
-            dom_tree = dom_tree.encode('utf8')
+        dom_tree = general_encode(dom_tree)
         result += dom_tree
         return result
 
