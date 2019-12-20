@@ -618,7 +618,7 @@ class WebElement(ControlContainer, IWebElement):
         self._root = root
 
         if isinstance(root, WebPage):
-            self._locators = XPath(locator).break_frames()
+            self._locators = root._locator + XPath(locator).break_frames()
         elif isinstance(root, FrameElement):
             loc = XPath(locator).break_frames()
             self._locators = root._locators + loc
