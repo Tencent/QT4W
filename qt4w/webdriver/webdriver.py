@@ -415,10 +415,7 @@ class WebDriverBase(IWebDriver):
         frame_xpath = frame_xpaths[-1].replace('\'', '"')
         js = r'''
         var frame_node = qt4w_driver_lib.selectNode('%s');
-        var url = frame_node.getAttribute('src');
-        if (url && url[0] == '/') {
-            url = location.protocol + '//' + location.host + url;
-        }
+        var url = frame_node.src;
         (frame_node.getAttribute('name') || frame_node.getAttribute('id') || '') + ',' + url;
         ''' % (frame_xpath)
         # 优先使用name，没有name使用id
