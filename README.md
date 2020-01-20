@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/Tencent/QT4W.svg?branch=master)](https://travis-ci.org/Tencent/QT4W)
 [![PyPi version](https://img.shields.io/pypi/v/qt4w.svg)](https://pypi.python.org/pypi/qt4w/) 
 [![GitHub tag](https://img.shields.io/github/tag/Tencent/qt4w.svg)](https://GitHub.com/Tencent/qt4w/tags/)
+[![Documentation Status](https://readthedocs.org/projects/qt4w/badge/?version=latest)](https://qt4w.readthedocs.io/zh_CN/latest/?badge=latest)
 
 QT4W (Quick Test for Web) is a QTA test automation driver for Web.
 
