@@ -29,7 +29,7 @@ Following is the list of supported WebView.
 | X5 | Android | QQ browser or embedded QQ browser(X5) window | Provided by [QT4A](https://github.com/Tencent/QT4A/blob/master/qt4a/andrcontrols.py)| 
 | XWalk | Android | embedded XWalk window | Provided by [AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/blob/master/wxmplib/util.py)| 
 | iOSBuildin | iOS |  build-in browser and embedded Web window on iOS | Provided by [QT4i](https://github.com/Tencent/QT4i/tree/master/qt4i/driver/web)| 
-| WeChat Mini Program  | WeChat/Android | WeChat Mini Program |  Provided by [AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)| 
+| WeChat Mini Program&WeChat H5 | WeChat Android | WeChat Mini Program OR WeChat H5 |  Provided by [AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)| 
 | Chrome | MacOS | Chrome browser or embedded Webkit window | Provided by  QT4Mac |
 
 
@@ -40,8 +40,8 @@ Following is the list of supported WebDriver.
 
 | WebDriver | 说明 | 相关实现代码 |
 | -- | -- | -- | 
-| IE | IE Trident engine | Provided by [QT4W](https://git.code.oa.com/QT4W/QT4W/blob/master/qt4w/webdriver/iewebdriver.py) |
-| Webkit | Webkit engine | Provided by [QT4W](https://git.code.oa.com/QT4W/QT4W/blob/master/qt4w/webdriver/webkitwebdriver.py) |
+| IE | IE Trident engine | Provided by [QT4W](https://github.com/Tencent/QT4W/blob/master/qt4w/webdriver/iewebdriver.py) |
+| Webkit | Webkit engine | Provided by [QT4W](https://github.com/Tencent/QT4W/blob/master/qt4w/webdriver/webkitwebdriver.py) |
 
 
 ### WebControl
@@ -81,7 +81,7 @@ WebView是对浏览器窗口的抽象，是对原生控件的再次封装。QT4W
 | X5 | Android | QQ移动浏览器和X5内核内嵌页面使用 | 由[QT4A](https://github.com/Tencent/QT4A/blob/master/qt4a/andrcontrols.py)提供| 
 | XWalk | Android | XWalk内核内嵌页面使用 | 由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/blob/master/wxmplib/util.py)提供| 
 | iOSBuildin | iOS | iOS系统内置浏览器和内嵌页面使用 | 由[QT4i](https://github.com/Tencent/QT4i/tree/master/qt4i/driver/web)提供| 
-| 微信小程序 | Android微信 | 微信小程序使用 |  由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)提供| 
+| 微信小程序&微信H5 | Android微信 | 微信小程序或者微信H5使用 |  由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)提供| 
 | Chrome | MacOS | Mac OS下的Chrome浏览器和内嵌页面使用 | 由QT4Mac提供 |
 
 
@@ -95,8 +95,8 @@ WebDriver是Web自动化中驱动层的封装，该模块主要用来处理DOM�
 
 | WebDriver | 说明 | 相关实现代码 |
 | -- | -- | -- | 
-| IE | IE内核使用 | 由[QT4W](https://git.code.oa.com/QT4W/QT4W/blob/master/qt4w/webdriver/iewebdriver.py)内置 |
-| Webkit | Webkit内核使用 | 由[QT4W](https://git.code.oa.com/QT4W/QT4W/blob/master/qt4w/webdriver/webkitwebdriver.py)内置 |
+| IE | IE内核使用 | 由[QT4W](https://github.com/Tencent/QT4W/blob/master/qt4w/webdriver/iewebdriver.py)内置 |
+| Webkit | Webkit内核使用 | 由[QT4W](https://github.com/Tencent/QT4W/blob/master/qt4w/webdriver/webkitwebdriver.py)内置 |
 
 如需要扩展新的WebDriver请参考[WebDriver封装文档](https://qt4w.readthedocs.io/zh_CN/latest/extend/WebDriver.html)。
 
