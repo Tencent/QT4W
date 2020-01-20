@@ -78,7 +78,7 @@ page.controls("XXX").click()
 | X5 | Android | QQ移动浏览器和X5内核内嵌页面使用 | 由[QT4A](https://github.com/Tencent/QT4A/blob/master/qt4a/andrcontrols.py)提供| 
 | XWalk | Android | XWalk内核内嵌页面使用 | 由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/blob/master/wxmplib/util.py)提供| 
 | iOSBuildin | iOS | iOS系统内置浏览器和内嵌页面使用 | 由[QT4i](https://github.com/Tencent/QT4i/tree/master/qt4i/driver/web)提供| 
-| 微信小程序/微信H5 | Android微信 | 微信小程序或者微信内部的H5页面使用 |  由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)提供| 
+| 微信小程序&微信H5 | Android微信 | 微信小程序或者微信内部的H5页面使用 |  由[AndroidWXMPLib](https://github.com/qtacore/AndroidWXMPLib/)提供| 
 | Chrome | MacOS | Mac OS下的Chrome浏览器和内嵌页面使用 | 由QT4Mac提供 |
 
 QT4W也支持用户自定义扩展来支持更多的兼容性。更多信息请查阅《[扩展QT4W][3]》章节。
