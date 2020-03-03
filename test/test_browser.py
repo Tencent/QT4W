@@ -30,6 +30,7 @@ class TestBrowser(unittest.TestCase):
 
     def test_openurl(self):
         Browser.register_browser("testBrowser", "test.util.FakeBrowser")
+        self.assertEqual("http://www.test.com", Browser().open_url("http://www.test.com"))
         self.assertEqual("http://www.test.com", Browser("testBrowser").open_url("http://www.test.com"))
 
 

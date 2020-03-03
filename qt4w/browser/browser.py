@@ -81,7 +81,7 @@ class Browser(IBrowser):
         '''
         if not self._browser_name:
             # 随机选择浏览器
-            self._browser_name = random.choice(self.browser_dict.keys())
+            self._browser_name = random.choice(list(self.browser_dict.keys()))
         browser_cls_path = self.browser_dict.get(self._browser_name)
 
         if not browser_cls_path:
