@@ -211,7 +211,7 @@ class WebDriverBase(IWebDriver):
         if (cnt){
             cnt--;
             if(window.console) console.log('show' + cnt);
-            setTimeout("qt4w_driver_lib.showDiv(" + cnt + ")", 200);
+            setTimeout(function(){qt4w_driver_lib.showDiv(cnt)}, 200);
         }
     },
     
