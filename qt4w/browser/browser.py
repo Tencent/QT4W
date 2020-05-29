@@ -23,13 +23,15 @@ class IBrowser(object):
     '''浏览器接口类
     '''
 
-    def open_url(self, url, page_cls=None, invisible_mode=False):
+    def open_url(self, url, page_cls=None, proxy_server=None, invisible_mode=False):
         '''打开一个url，返回page_cls类的实例
 
         :param url: 要打开页面的url
         :type url:  string
         :param page_cls: 要返回的具体WebPage类,为None表示返回WebPage实例
         :type page_cls: Class
+        :param proxy_server: 使用的代理服务器地址
+        :type proxy_server: string
         :param invisible_mode: 是否开启隐身模式
         :type invisible_mode: Bool
         '''
@@ -62,6 +64,7 @@ class Browser(IBrowser):
     '''对外的浏览器类
     '''
     browser_dict = {}  # 存储浏览器类型与浏览器类的对应关系
+    proxy_server = None # 设置全局代理服务器
 
     def __init__(self, browser_name=None, clear_data=True):
         '''创建具体的Browser实例
@@ -73,6 +76,7 @@ class Browser(IBrowser):
         '''
         self._browser_name = browser_name
         self._browser = self._get_browser_cls()
+        self._proxy_server = self.__class__.proxy_server
         if clear_data:
             self.clear_data()
 
@@ -104,17 +108,23 @@ class Browser(IBrowser):
         '''
         Browser.browser_dict[browser_name] = browser_cls_path
 
-    def open_url(self, url, page_cls=None, invisible_mode=False):
+    def open_url(self, url, page_cls=None, proxy_server=None, invisible_mode=False):
         '''打开一个url，返回page_cls类的实例
 
         :param url: 要打开页面的url
         :type url:  string
         :param page_cls: 要返回的具体WebPage类,为None表示返回WebPage实例
         :type page_cls: Class
+        :param proxy_server: 使用的代理服务器地址
+        :type proxy_server: string
         :param invisible_mode: 是否开启隐身模式
         :type invisible_mode: Bool
         '''
-        return self._browser.open_url(url, page_cls)
+        proxy_server = proxy_server or self._proxy_server
+        if proxy_server:
+            return self._browser.open_url(url, page_cls, proxy_server=proxy_server)
+        else:
+            return self._browser.open_url(url, page_cls)
 
     def find_by_url(self, url, page_cls=None, timeout=10):
         '''在当前打开的页面中查找指定url,返回WebPage实例，如果未找到，返回None
@@ -151,6 +161,11 @@ class Browser(IBrowser):
             except NotImplementedError:
                 pass
         logger.warn('[%s] Browser %s not implement clear_data method' % (self.__class__.__name__, self._browser.__class__.__name__))
+
+    def set_proxy(self, proxy_server):
+        '''设置浏览器代理
+        '''
+        self._proxy_server = proxy_server
 
 
 if __name__ == '__main__':

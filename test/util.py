@@ -16,6 +16,14 @@
 '''QT4W单元测试 使用项
 '''
 from __future__ import absolute_import
+
+import threading
+
+try:
+    import BaseHTTPServer as httpserver
+except ImportError:
+    import http.server as httpserver
+
 from qt4w.webview.webview import IWebView
 from qt4w.webdriver.webdriver import IWebDriver
 from qt4w.webcontrols import WebPage, WebElement
@@ -25,7 +33,7 @@ from qt4w import XPath
 class MockWebDriver(IWebDriver):
     '''Mock WebDriver
     '''
-
+    
     attr_dict={}
     js_dict={
     "location.href":"http://www.test.com",
@@ -35,10 +43,10 @@ class MockWebDriver(IWebDriver):
     "close()":"closePage",
     }
     rect=[0,1,2,3]
-
+    
     def __init__(self, webview):
         self._webview = webview
-
+        
     def set_attr_dict(self,dict):
         ''' 替换属性字典
 
@@ -47,10 +55,10 @@ class MockWebDriver(IWebDriver):
         '''
         self.attr_dict={}
         self.attr_dict.update(dict)
-
+    
     def set_dict(self, key, value):
         self.js_dict[key]=value
-
+        
     def get_attribute(self, elem_xpaths, attr_name):
         return self.attr_dict[attr_name]
 
@@ -59,13 +67,13 @@ class MockWebDriver(IWebDriver):
 
     def get_style(self, elem_xpaths, style_name):
         return self.attr_dict[style_name]
-
+    
     def set_attribute(self,locator,name,value):
          self.attr_dict[name] = value
 
     def set_property(self,locator,name,value):
         self.attr_dict[name] = value
-
+    
     def highlight(self, elem_xpaths):
         return elem_xpaths
 
@@ -76,42 +84,42 @@ class MockWebDriver(IWebDriver):
         rect.append(x2)
         rect.append(y2)
         return rect
-
+    
     def eval_script(self, frame_xpaths, script):
         '''模拟JS执行方法
         '''
         if script in self.js_dict.keys():
             return self.js_dict[script]
-
+    
     def get_element(self,locator):
         return locator
-
+    
     def set_rect(self,list):
         self.rect=[]
         self.rect.extend(list)
-
+        
     def get_elem_rect(self,locator,recv=True):
         return self.rect
-
+    
     def scroll_to_visible(self, locators):
         return True
-
+    
     def read_console_log(self,timeout=10):
         return "testlog"
 
     def get_element_count(self,locators):
         return 3
-
+        
 class TestWebView(IWebView):
     '''Mock WebView
     '''
     visible_rectelem_count = [0,0,4,4]
     visible_rect = [0,0,4,4]
-
+    
 
     def __init__(self,typename):
         self._browser_type = typename
-
+    
     @property
     def webdriver_class(self):
         return MockWebDriver
@@ -146,10 +154,10 @@ class TestPage(WebPage):
         self.view = TestWebView("testbrowser")
         super(TestPage, self).__init__(self.view, wait_for_ready=False)
         self.update_ui_map(ui_map)
-
+    
     def get_webdriver(self):
         return self._webdriver
-
+        
     def get_webview(self):
         return self.get_webdriver() # TODO: remove this method
 
@@ -182,3 +190,31 @@ class FakeBrowser(IBrowser):
 
     def find_by_url(self, url, page_cls=None):
         return url
+
+
+class MockHTTPRequestHandler(httpserver.BaseHTTPRequestHandler):
+
+    def do_GET(self):
+        if self.headers['Host'] != 'www.test.com':
+            self.send_response(400)
+            return
+        content = self.path
+        if not isinstance(content, bytes):
+            content = content.encode()
+        self.send_response(200)
+        self.send_header("Content-Type", 'text/html; charset=UTF-8')
+        self.send_header("Content-Length", len(content))
+        self.end_headers()
+
+        self.wfile.write(content)
+
+
+def start_mock_http_server(port, in_thread=False):
+    httpd = httpserver.HTTPServer(('127.0.0.1', port), MockHTTPRequestHandler)
+    if in_thread:
+        thread = threading.Thread(target=httpd.serve_forever)
+        thread.daemon = True
+        thread.start()
+    else:
+        httpd.serve_forever()
+    return httpd

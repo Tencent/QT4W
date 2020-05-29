@@ -16,9 +16,21 @@
 '''util模块单元测试
 '''
 
+from __future__ import absolute_import
+
+import random
+import socket
+import threading
 import unittest
 
+try:
+    import urllib2
+except ImportError:
+    import urllib.request as urllib2
+
 from qt4w import util
+
+from test.util import start_mock_http_server
 
 
 class EnumKeyCodeTestCase(unittest.TestCase):
@@ -49,6 +61,54 @@ class DeprecatedTestCase(unittest.TestCase):
     def test_call(self):
         self.Test().func()
 
+
+class ProxyServerTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.proxy_port = random.randint(10000, 65000)
+        print('proxy port is %d' % cls.proxy_port)
+        cls.proxy_server = util.ProxyServer(cls.proxy_port)
+        cls.proxy_server.start_in_thread()
+        cls.server_port = random.randint(10000, 65000)
+        print('http server port is %d' % cls.server_port)
+        cls.httpd = start_mock_http_server(cls.server_port, True)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.proxy_server.stop()
+        cls.httpd.shutdown()
+
+    def test_http(self):
+        util.HostsManager().add_host('www.test.com', '127.0.0.1')
+        proxy_addr = 'http://127.0.0.1:%d' % self.proxy_port
+        proxy = urllib2.ProxyHandler({"http" : proxy_addr})
+        opener = urllib2.build_opener(proxy)
+        urllib2.install_opener(opener)
+        url = 'http://www.test.com:%d/qt4w/?id=123' % self.server_port
+        request = urllib2.Request(url)
+        response = urllib2.urlopen(request)
+        self.assertEqual(response.code, 200)
+        body = response.read()
+        self.assertEqual(body, b'/qt4w/?id=123')
+
+    def test_https(self):
+        util.HostsManager().add_host('www.test.com', '127.0.0.1')
+        s = socket.socket()
+        s.connect(('127.0.0.1', self.proxy_port))
+        buffer = 'CONNECT www.test.com:%d HTTP/1.1\r\nhost: www.test.com:%d\r\n\r\n' % (self.server_port, self.server_port)
+        if not isinstance(buffer, bytes):
+            buffer = buffer.encode()
+        s.send(buffer)
+        buffer = s.recv(4096)
+        first_line = buffer.splitlines()[0]
+        status_code = int(first_line.split()[1])
+        self.assertEqual(status_code, 200)
+        s.send(b'GET / HTTP/1.1\r\nHost: www.test.com\r\n\r\n')
+        buffer = s.recv(4096)
+        first_line = buffer.splitlines()[0]
+        status_code = int(first_line.split()[1])
+        self.assertEqual(status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()

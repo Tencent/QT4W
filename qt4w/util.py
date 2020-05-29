@@ -12,15 +12,26 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-
 '''QT4W公共库
 '''
 
 from __future__ import absolute_import, print_function
-import sys
-import os
+
 import logging as logger
+import os
+import socket
+import sys
+import threading
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
 import six
+import tornado.httpclient
+import tornado.ioloop
+import tornado.web
 
 
 class QT4WRuntimeError(RuntimeError):
@@ -136,7 +147,7 @@ def general_encode(s):
     '''
     if six.PY2 and isinstance(s, (unicode, )):
         s = s.encode('utf8')
-    elif six.PY3 and isinstance(s, (bytes,)):
+    elif six.PY3 and isinstance(s, (bytes, )):
         s = s.decode('utf8')
     return s
 
@@ -144,7 +155,7 @@ def general_encode(s):
 def unicode_decode(s):
     '''将字符串解码为unicode编码
     '''
-    if six.PY2 or isinstance(s, (bytes,)):
+    if six.PY2 or isinstance(s, (bytes, )):
         s = s.decode('utf8')
     return s
 
@@ -152,9 +163,11 @@ def unicode_decode(s):
 def encode_wrap(func):
     '''处理函数返回值编码
     '''
+
     def wrap_func(*args, **kwargs):
         ret = func(*args, **kwargs)
         return general_encode(ret)
+
     return wrap_func
 
 
@@ -170,22 +183,30 @@ class Deprecated(object):
             frame = sys._getframe(1)
             code = frame.f_code
             file_name = os.path.split(code.co_filename)[-1]
-            print('[Warning] method [%s] is deprecated, called in [%s:%s], pls use [%s] instead' % (
-                func.__name__, file_name, code.co_name, self._new_func), file=sys.stderr)
+            print(
+                '[Warning] method [%s] is deprecated, called in [%s:%s], pls use [%s] instead'
+                % (func.__name__, file_name, code.co_name, self._new_func),
+                file=sys.stderr)
             return getattr(this, self._new_func)(*args, **kwargs)
 
         if func.__class__.__name__ == 'function':
             return wrap_func
         elif isinstance(func, property):
+
             def prop_fget(fget):
                 def _wrap_fget(this):
                     frame = sys._getframe(1)
                     code = frame.f_code
                     file_name = os.path.split(code.co_filename)[-1]
-                    print('[Warning] property [%s] is deprecated, called in [%s:%s], pls use [%s] instead' % (
-                        fget.__name__, file_name, code.co_name, self._new_func), file=sys.stderr)
+                    print(
+                        '[Warning] property [%s] is deprecated, called in [%s:%s], pls use [%s] instead'
+                        % (fget.__name__, file_name, code.co_name,
+                           self._new_func),
+                        file=sys.stderr)
                     return getattr(this, self._new_func)
+
                 return _wrap_fget
+
             return property(prop_fget(func.fget), func.fset, func.fdel)
         else:
             raise NotImplementedError(func.__class__.__name__)
@@ -200,6 +221,7 @@ def lazy_init(func):
             self.post_init()
             self.__inited = True
         return func(self, *args, **kwargs)
+
     return _wrap_func
 
 
@@ -294,7 +316,8 @@ class Frame(object):
         return self._url
 
     def __str__(self):
-        return '<Frame object id=%s name=%s url=%s at 0x%x>' % (self._id, self._name, self._url, id(self))
+        return '<Frame object id=%s name=%s url=%s at 0x%x>' % (
+            self._id, self._name, self._url, id(self))
 
     def add_child(self, frame):
         '''添加子frame
@@ -358,7 +381,8 @@ class KeyCode(object):
         return self._code
 
     def __str__(self):
-        return '<KeyCode object at 0x%.8x %s %d>' % (id(self), self._name, self._code)
+        return '<KeyCode object at 0x%.8x %s %d>' % (id(self), self._name,
+                                                     self._code)
 
     def __eq__(self, other):
         if isinstance(other, int):
@@ -456,3 +480,313 @@ class EnumKeyCode(object):
 
 
 EnumKeyCode.init()
+
+
+class Singleton(object):
+    '''Singleton Decorator
+    '''
+
+    def __init__(self, cls):
+        self.__instance = None
+        self.__cls = cls
+
+    def __call__(self, *args, **kwargs):
+        if not self.__instance:
+            self.__instance = self.__cls(*args, **kwargs)
+        return self.__instance
+
+
+@Singleton
+class HostsManager(object):
+    '''hosts管理器
+    '''
+
+    def __init__(self):
+        self._hosts = {}
+
+    def add_host(self, host, ip):
+        '''添加host记录
+
+        :param host: 域名
+        :type  host: string
+        :param ip:   ip
+        :type  ip:   string
+        '''
+        self._hosts[host] = ip
+
+    def add_hosts(self, hosts):
+        '''添加多条host记录
+
+        :param hosts: `host ip`格式的多行hosts记录
+        :type  hosts: string
+        '''
+        for line in hosts.strip().splitlines():
+            host, ip = line.split()
+            self.add_host(host, ip)
+
+    def remove_host(self, host):
+        '''移除一条host记录
+
+        :param host: 域名
+        :type  host: string
+        '''
+        self._hosts.pop(host, None)
+
+    def clear_hosts(self):
+        '''清除hosts记录
+        '''
+        self._hosts = {}
+
+    def resolve(self, host):
+        '''解析域名，如果没有该条记录则返回空
+
+        :param host: 域名
+        :type  host: string
+        '''
+        if host in self._hosts:
+            return self._hosts[host]
+
+
+class ProxyRequestHandler(tornado.web.RequestHandler):
+    '''HTTP/HTTPS代理请求处理
+    '''
+    SUPPORTED_METHODS = ['OPTION', 'GET', 'POST', 'PUT', 'DELETE', 'CONNECT']
+
+    def create_patch(self, stream, hook_init=False):
+        TCPClient = tornado.tcpclient.TCPClient
+        origin_connect = TCPClient.connect
+
+        @tornado.gen.coroutine
+        def connect(tcp_client,
+                    host,
+                    port,
+                    af=socket.AF_UNSPEC,
+                    ssl_options=None,
+                    max_buffer_size=None,
+                    source_ip=None,
+                    source_port=None,
+                    timeout=None):
+            TCPClient.connect = origin_connect  # 还原原始函数
+            return stream
+
+        TCPClient.connect = connect
+
+        if not hook_init:
+            return
+
+        _HTTPConnection = tornado.simple_httpclient._HTTPConnection
+        origin__init__ = _HTTPConnection.__init__
+
+        def __init__(obj, client, request, *args, **kwargs):
+            origin__init__(obj, client, request, *args, **kwargs)
+
+            class SplitResultProxy(object):
+                def __init__(self, obj):
+                    self._obj = obj
+
+                @property
+                def path(self):
+                    path = request.request.url
+                    if '?' in path:
+                        path = path.split('?')[0]
+                    return path
+
+                def __getattr__(self, attr):
+                    return getattr(self._obj, attr)
+
+            obj.parsed = SplitResultProxy(obj.parsed)
+            _HTTPConnection.__init__ = origin__init__
+
+        _HTTPConnection.__init__ = __init__
+
+    @tornado.web.asynchronous
+    def option(self):
+        self.handle_request()
+
+    @tornado.web.asynchronous
+    def get(self):
+        self.handle_request()
+
+    @tornado.web.asynchronous
+    def post(self):
+        self.handle_request()
+
+    @tornado.web.asynchronous
+    def put(self):
+        self.handle_request()
+
+    @tornado.web.asynchronous
+    def delete(self):
+        self.handle_request()
+
+    def get_proxy(self, type, host):
+        no_proxys = os.environ.get('no_proxy', '').split(',')
+        for it in no_proxys:
+            if not it:
+                continue
+            if host == it:
+                return None, None
+            if it[0] == '.' and host.endswith(it):
+                return None, None
+        http_proxy = os.environ.get('%s_proxy' % type)
+        if not http_proxy:
+            return None, None
+        http_proxy = urlparse(http_proxy)
+        return http_proxy.hostname, http_proxy.port
+
+    @tornado.gen.coroutine
+    def handle_request(self):
+        url = urlparse(self.request.uri)
+        host = url.hostname
+        port = url.port or 80
+        if 'Proxy-Connection' in self.request.headers:
+            del self.request.headers['Proxy-Connection']
+        uri = self.request.uri
+        ip = HostsManager().resolve(host)
+        if ip:
+            # 使用ip + Host头方式访问
+            logger.info('[%s] Hit host %s %s' %
+                        (self.__class__.__name__, host, ip))
+            uri = 'http://%s:%d%s' % (ip, port, url.path)
+            if url.query:
+                uri += '?' + url.query
+            self.request.headers['Host'] = host
+            host = ip
+
+        request = tornado.httpclient.HTTPRequest(
+            uri,
+            method=self.request.method,
+            body=self.request.body,
+            headers=self.request.headers,
+            follow_redirects=False,
+            allow_nonstandard_methods=True)
+        client = tornado.httpclient.AsyncHTTPClient()
+        proxy_host, proxy_port = self.get_proxy('http', host)
+        if proxy_host and proxy_port:
+            host = proxy_host
+            port = proxy_port
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+        stream = tornado.iostream.IOStream(s)
+        logger.info('[%s] Connect server %s:%d' %
+                    (self.__class__.__name__, host, port))
+        try:
+            yield stream.connect((host, port))
+        except tornado.iostream.StreamClosedError:
+            self.set_status(504, 'Connect %s:%d failed' % (host, port))
+            self.finish()
+            return
+
+        self.create_patch(stream, ip != None and proxy_host and proxy_port)
+        response = yield client.fetch(request, raise_error=False)
+        self.set_status(response.code, response.reason)
+        self._headers = tornado.httputil.HTTPHeaders(
+        )  # clear tornado default header
+        for header, v in response.headers.get_all():
+            if header not in ('Content-Length', 'Transfer-Encoding',
+                              'Content-Encoding', 'Connection'):
+                self.add_header(
+                    header,
+                    v)  # some header appear multiple times, eg 'Set-Cookie'
+
+        if response.body:
+            self.set_header('Content-Length', len(response.body))
+            self.write(response.body)
+        self.finish()
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def connect(self):
+        host, port = self.request.uri.split(':')
+        port = int(port)
+        ip = HostsManager().resolve(host)
+        if ip:
+            logger.info('[%s] Hit host %s %s' %
+                        (self.__class__.__name__, host, ip))
+            host = ip
+        downstream = self.request.connection.detach()
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+        upstream = tornado.iostream.IOStream(s)
+        proxy_host, proxy_port = self.get_proxy('https', host)
+
+        try:
+            yield upstream.connect((proxy_host or host, proxy_port or port))
+        except tornado.iostream.StreamClosedError:
+            buffer = 'HTTP/1.1 504 Connect %s:%d failed\r\n\r\n' % (
+                proxy_host or host, proxy_port or port)
+            if not isinstance(buffer, bytes):
+                buffer = buffer.encode()
+            downstream.write(buffer)
+            downstream.close()
+            self._finished = True
+            return
+
+        if proxy_host and proxy_port:
+            buffer = 'CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n\r\n' % (
+                host, port, host, port)
+            if not isinstance(buffer, bytes):
+                buffer = buffer.encode()
+            upstream.write(buffer)
+            response = yield upstream.read_until('\r\n\r\n')
+            first_line = response.splitlines()[0]
+            status_code = int(first_line.split()[1])
+            downstream.write(response)
+            if status_code != 200:
+                downstream.close()
+                self._finished = True
+                return
+        else:
+            downstream.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
+
+        downstream.read_until_close(
+            streaming_callback=lambda buffer: upstream.write(buffer)
+            if not upstream.closed() else None)
+        upstream.read_until_close(
+            streaming_callback=lambda buffer: downstream.write(buffer)
+            if not downstream.closed() else None)
+        self._finished = True
+
+
+class ProxyServer(object):
+    def __init__(self, port, address='127.0.0.1'):
+        '''
+        :param port: 端口
+        :type  port: int
+        :param address: 监听的ip地址
+        :type  address: string
+        '''
+        self._port = port
+        self._address = address
+        self._ioloop = None
+
+    def start(self):
+        '''启动代理服务
+        '''
+        if sys.version_info[0] > 2:
+            import asyncio
+            if not asyncio._get_running_loop():
+                # 设置事件循环
+                asyncio.set_event_loop(asyncio.new_event_loop())
+        app = tornado.web.Application([
+            (r'.*', ProxyRequestHandler),
+        ])
+        app.listen(self._port, self._address)
+        logger.info('HTTP proxy server is listening on %s:%d' %
+                    (self._address, self._port))
+        self._ioloop = self._ioloop or tornado.ioloop.IOLoop.instance()
+        self._ioloop.start()
+
+    def start_in_thread(self):
+        '''在新线程中启动代理服务
+        '''
+        thread = threading.Thread(target=self.start, args=())
+        thread.daemon = True
+        thread.start()
+
+    def stop(self):
+        '''停止代理服务
+        '''
+        if self._ioloop:
+            logger.info('HTTP proxy server is stopped')
+            self._ioloop.stop()
+            self._ioloop = None
