@@ -521,7 +521,7 @@ class HostsManager(object):
         :type  hosts: string
         '''
         for line in hosts.strip().splitlines():
-            host, ip = line.split()
+            ip, host = line.split()
             self.add_host(host, ip)
 
     def remove_host(self, host):
