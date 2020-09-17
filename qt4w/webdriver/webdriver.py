@@ -203,10 +203,14 @@ class WebDriverBase(IWebDriver):
             document.body.appendChild(this.bd2);
             document.body.appendChild(this.bd3);
         } else {
-            document.body.removeChild(this.bd0);
-            document.body.removeChild(this.bd1);
-            document.body.removeChild(this.bd2);
-            document.body.removeChild(this.bd3);
+            var elems = [this.bd0, this.bd1, this.bd2, this.bd3];
+            for(var i=0; i<elems.length; i++){
+                try{
+                    document.body.removeChild(elems[i]);
+                }catch(e){
+                    document.body.appendChild(elems[i]);
+                }
+            }
         }
         if (cnt){
             cnt--;
