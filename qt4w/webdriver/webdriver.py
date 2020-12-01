@@ -264,9 +264,13 @@ class WebDriverBase(IWebDriver):
                         var jsonData = {};
                         for(var key in data){
                             jsonData[key] = data[key];
-                            if(jsonData[key]) jsonData[key] = jsonData[key].toString();
+                            if(jsonData[key] && jsonData[key].toString) jsonData[key] = jsonData[key].toString();
                         }
-                        data = JSON.stringify(jsonData);
+                        try{
+                            data = JSON.stringify(jsonData);
+                        }catch(e){
+                            data = 'UnJsonable data';
+                        }
                     }
                     self.logData.push('[' + timeStr + '][console.' + arguments[0].name + '] ' + data);
                 }
