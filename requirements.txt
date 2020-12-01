@@ -1,2 +1,2 @@
 six
-tornado==5.0
+tornado==5.1.1
