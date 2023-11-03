@@ -13,7 +13,7 @@
 # governing permissions and limitations under the License.
 #
 
-'''IWebWiew接口定义
-'''
+"""IWebWiew接口定义
+"""
 
 from .webview import IWebView

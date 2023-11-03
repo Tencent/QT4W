@@ -12,8 +12,8 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-'''IWebDriver接口
-'''
+"""IWebDriver接口
+"""
 
 import json
 import six
@@ -22,45 +22,43 @@ from qt4w.util import logger, general_encode, unicode_decode, ControlNotFoundErr
 
 
 class IWebDriver(object):
-    '''IWebDriver接口
-    '''
+    """IWebDriver接口"""
 
     def __init__(self, webview):
-        '''构造函数
+        """构造函数
 
         :param webview: 对应的WebView实例
         :type webview:  object
-        '''
+        """
         raise NotImplementedError
 
     @property
     def ready_state(self):
-        '''页面状态
-        '''
+        """页面状态"""
         raise NotImplementedError
 
     def eval_script(self, frame_xpaths, script):
-        '''在指定frame中执行JavaScript，并返回执行结果
+        """在指定frame中执行JavaScript，并返回执行结果
 
         :param frame_xpaths: frame元素的XPATH路径，如果是顶层页面，怎传入“[]”
         :type frame_xpaths:  list
         :param script:       要执行的JavaScript语句
         :type script:        string
-        '''
+        """
         raise NotImplementedError
 
     def get_attribute(self, elem_xpaths, attr_name):
-        '''获取元素属性
+        """获取元素属性
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param attr_name:   属性名
         :type attr_name:    string
-        '''
+        """
         raise NotImplementedError
 
     def set_attribute(self, elem_xpaths, attr_name, value):
-        '''设置元素属性
+        """设置元素属性
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
@@ -68,31 +66,31 @@ class IWebDriver(object):
         :type attr_name:    string
         :param value:       新的值
         :type value:        string
-        '''
+        """
         raise NotImplementedError
 
     def get_elem_rect(self, elem_xpaths, rav=True):
-        '''获取元素在页面中的坐标
+        """获取元素在页面中的坐标
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param rav:         是否是相对于当前frame
         :type rav:          bool
-        '''
+        """
         raise NotImplementedError
 
     def get_property(self, elem_xpaths, prop_name):
-        '''获取元素的特定值，例如：node.innerHTML
+        """获取元素的特定值，例如：node.innerHTML
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param prop_name:   property名
         :type prop_name:    string
-        '''
+        """
         raise NotImplementedError
 
     def set_property(self, elem_xpaths, prop_name, value):
-        '''设置元素的特定值，例如：node.innerHTML
+        """设置元素的特定值，例如：node.innerHTML
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
@@ -100,65 +98,65 @@ class IWebDriver(object):
         :type prop_name:    string
         :param value:       新的值
         :type value:        string
-        '''
+        """
         raise NotImplementedError
 
     def get_style(self, elem_xpaths, style_name):
-        '''获取元素的某一样式值
+        """获取元素的某一样式值
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param style_name:  样式名称
         :type style_name:   string
-        '''
+        """
         raise NotImplementedError
 
     def highlight(self, elem_xpaths):
-        '''使元素高亮
+        """使元素高亮
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
-        '''
+        """
         raise NotImplementedError
 
 
 class WebDriverBase(IWebDriver):
-    '''WebDriver基类
-    '''
-    driver_script = r'''
+    """WebDriver基类"""
+
+    driver_script = r"""
     if (typeof window.qt4w_hook_console == 'undefined') window.qt4w_hook_console = true;
     window['qt4w_driver_lib'] = {
     getScale : function(){
         return 1;
     },
-    
+
     getScreenSize: function(){
         var result = new Array();
         result.push(screen.availWidth);
         result.push(screen.availHeight);
         return result.toString();
     },
-    
+
     selectNodes : function(xpath){
         var oResult = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
-        var aNodes = new Array();  
-        if (oResult != null) {  
-            var oElement = oResult.iterateNext();  
-            while (oElement) {  
-                aNodes.push(oElement);  
-                oElement = oResult.iterateNext();  
-            }  
+        var aNodes = new Array();
+        if (oResult != null) {
+            var oElement = oResult.iterateNext();
+            while (oElement) {
+                aNodes.push(oElement);
+                oElement = oResult.iterateNext();
+            }
         }
         return aNodes;
     },
-    
+
     selectNode : function(xpath){
         var nodes = this.selectNodes(xpath);
         if(nodes.length == 0) throw new Error('Find element '+xpath+' failed');
         else if(nodes.length > 1) throw new Error('Find '+nodes.length+' elements match '+xpath);
         return nodes[0];
     },
-    
+
     getElementZoom: function(node){
         var scale = 1;
         while(node != null && node != document.documentElement){
@@ -170,7 +168,7 @@ class WebDriverBase(IWebDriver):
         }
         return scale;
     },
-    
+
     getElemRect: function(node){
         var result = new Array();
         var rect = node.getBoundingClientRect();
@@ -188,14 +186,14 @@ class WebDriverBase(IWebDriver):
         result.push(height * scale);
         return result.toString();
     },
-    
+
     initHighlightDiv: function(){
         this.bd0 = document.createElement("div");
         this.bd1 = document.createElement("div");
         this.bd2 = document.createElement("div");
         this.bd3 = document.createElement("div");
     },
-    
+
     showDiv: function(cnt){
         if(cnt % 2 != 0){
             document.body.appendChild(this.bd0);
@@ -218,7 +216,7 @@ class WebDriverBase(IWebDriver):
             setTimeout(function(){qt4w_driver_lib.showDiv(cnt)}, 200);
         }
     },
-    
+
     highlight: function(node){
         if (!this.bd0) {
             this.initHighlightDiv();
@@ -229,7 +227,7 @@ class WebDriverBase(IWebDriver):
         var width = node.offsetWidth;
         var height = node.offsetHeight;
         if(window.console) console.log(left+','+top+','+width+','+height);
-        
+
         this.bd0.setAttribute("style", "left:" + (left - 1) + "px;top:" + (top - 1) + "px;z-index:32767;"
             + "width:" + (width + 2) + "px;height:2px;position:fixed;background-color: red");
         this.bd1.setAttribute("style", "left:" + (left - 1) + "px;top:" + (top - 1) + "px;z-index:32767;"
@@ -241,7 +239,7 @@ class WebDriverBase(IWebDriver):
         //console.log('style'+this.bd0.getAttribute('style')+'');
         this.showDiv(3);
     },
-    
+
     scrollToVisible: function(node){
         if(node.scrollIntoViewIfNeeded){
             node.scrollIntoViewIfNeeded();
@@ -249,7 +247,7 @@ class WebDriverBase(IWebDriver):
             node.scrollIntoView();
         }
     },
-    
+
     logData: [],
     hookConsole: function(){
         var self = this;
@@ -296,51 +294,51 @@ class WebDriverBase(IWebDriver):
             hookFunction('error');
         }
     },
-    
+
     readLogData: function (count) {
         if (count < 0) count = this.logData.length;
         return this.logData.splice(0, count);
     }
-    
+
     };
 
     if (window.qt4w_hook_console) qt4w_driver_lib.hookConsole();
-    '''
+    """
 
     def __init__(self, webview):
-        '''构造函数
+        """构造函数
 
         :param webview: 对应的WebView实例
         :type webview:  object
-        '''
+        """
         self._webview = webview
 
     @staticmethod
     def create_driver(webview):
-        '''根据webview类型创建对应的WebDriver实例
+        """根据webview类型创建对应的WebDriver实例
 
         :param webview: WebView实例
         :type webview:  object
-        '''
+        """
         web_driver_path = webview.web_driver
         module = __import__(web_driver_path)
-        for item in web_driver_path.split('.')[1:]:
+        for item in web_driver_path.split(".")[1:]:
             module = getattr(module, item)
-        web_driver_cls = getattr(module, 'WebDriver')
+        web_driver_cls = getattr(module, "WebDriver")
         return web_driver_cls(webview)
 
     def _my_encode(self, text):
-        '''对于中文，统一处理成unicode编码
+        """对于中文，统一处理成unicode编码
         如“中国”，变成“\u4e2d\u56fd”
-        '''
+        """
         text = unicode_decode(text)
-        return general_encode(text.encode('raw_unicode_escape'))
+        return general_encode(text.encode("raw_unicode_escape"))
 
     def _my_decode(self, text):
-        return text.decode('raw_unicode_escape')
+        return text.decode("raw_unicode_escape")
 
     def _xpath_encode(self, xpath):
-        xpath = xpath.replace('\'', '"')
+        xpath = xpath.replace("'", '"')
         return xpath
         # return self._my_encode(xpath)
 
@@ -349,10 +347,9 @@ class WebDriverBase(IWebDriver):
             xpath_list[i] = self._xpath_encode(xpath_list[i])
 
     def _break_xpaths(self, elem_xpaths):
-        '''将xpath数组分隔成frame_xpaths和elem_xpath
-        '''
+        """将xpath数组分隔成frame_xpaths和elem_xpath"""
         if len(elem_xpaths) < 1:
-            raise ValueError('xpath is []')
+            raise ValueError("xpath is []")
         frame_xpaths = elem_xpaths[:-1]
         self._xpaths_encode(frame_xpaths)
         elem_xpath = elem_xpaths[-1]
@@ -360,124 +357,120 @@ class WebDriverBase(IWebDriver):
         return frame_xpaths, elem_xpath
 
     def _get_dom_tree(self, frame_xpaths):
-        '''获取DOM树
-        '''
-        try:
-            from tuia.env import run_env, EnumEnvType
-            if run_env != EnumEnvType.Lab:
-                return ''
-        except ImportError:
-            pass
-
-        result = '\nCurrent DOM Tree：\n'
-        dom_tree = self.eval_script(
-            frame_xpaths, 'document.documentElement.outerHTML;')
+        """获取DOM树"""
+        result = "\nCurrent DOM Tree：\n"
+        dom_tree = self.eval_script(frame_xpaths, "document.documentElement.outerHTML;")
         dom_tree = general_encode(dom_tree)
         result += dom_tree
         return result
 
     def eval_script(self, frame_xpaths, script):
-        '''在指定frame中执行JavaScript，并返回执行结果（该实现需要处理js基础库未注入情况的处理）
+        """在指定frame中执行JavaScript，并返回执行结果（该实现需要处理js基础库未注入情况的处理）
 
         :param frame_xpaths: frame元素的XPATH路径，如果是顶层页面，怎传入“[]”
         :type frame_xpaths:  list
         :param script:       要执行的JavaScript语句
         :type script:        string
-        '''
-        from qt4w.util import JavaScriptError, ControlNotFoundError, ControlAmbiguousError
+        """
+        from qt4w.util import (
+            JavaScriptError,
+            ControlNotFoundError,
+            ControlAmbiguousError,
+        )
+
         try:
             return self._webview.eval_script(frame_xpaths, script)
         except JavaScriptError as e:
             err_msg = e.message
-            err_msg = err_msg.split('\n')[0]  # 错误堆栈信息可能会有影响
+            err_msg = err_msg.split("\n")[0]  # 错误堆栈信息可能会有影响
             err_msg = general_encode(err_msg)
-            if ('ReferenceError' in err_msg or 'TypeError' in err_msg) and 'qt4w_driver_lib' in err_msg:
+            if (
+                "ReferenceError" in err_msg or "TypeError" in err_msg
+            ) and "qt4w_driver_lib" in err_msg:
                 # ie8 TypeError ie9 ReferenceError
                 # 注入js基础库
                 self.eval_script(e.frame, self.driver_script)
                 return self.eval_script(frame_xpaths, script)
-            elif 'Find element' in err_msg and 'failed' in err_msg:
+            elif "Find element" in err_msg and "failed" in err_msg:
                 # 未找到元素
+                logger.warning(self._get_dom_tree(frame_xpaths))
                 raise ControlNotFoundError(err_msg)
-            elif 'Find' in err_msg and 'elements match' in err_msg:
-                err_msg += self._get_dom_tree(frame_xpaths)
+            elif "Find" in err_msg and "elements match" in err_msg:
+                logger.warning(self._get_dom_tree(frame_xpaths))
                 raise ControlAmbiguousError(err_msg)
             else:
                 raise e
 
     def get_ready_state(self, frame_xpaths):
-        '''获取页面状态
-        '''
-        return self.eval_script(frame_xpaths, 'document.readyState')
+        """获取页面状态"""
+        return self.eval_script(frame_xpaths, "document.readyState")
 
     def get_screen_size(self):
-        '''获取屏幕大小
-        '''
-        result = self.eval_script([], 'qt4w_driver_lib.getScreenSize();')
-        width, height = result.split(',')
+        """获取屏幕大小"""
+        result = self.eval_script([], "qt4w_driver_lib.getScreenSize();")
+        width, height = result.split(",")
         return int(width), int(height)
 
     def _get_frame_info(self, frame_xpaths):
-        '''获取frame属性信息
-        '''
-        frame_xpath = frame_xpaths[-1].replace('\'', '"')
-        js = r'''
+        """获取frame属性信息"""
+        frame_xpath = frame_xpaths[-1].replace("'", '"')
+        js = r"""
         var frame_node = qt4w_driver_lib.selectNode('%s');
         var url = frame_node.src;
         (frame_node.getAttribute('name') || frame_node.getAttribute('id') || '') + ',' + url;
-        ''' % (frame_xpath)
+        """ % (
+            frame_xpath
+        )
         # 优先使用name，没有name使用id
         result = self.eval_script(frame_xpaths[:-1], js)
-        pos = result.find(',')
+        pos = result.find(",")
         if pos < 0:
-            raise RuntimeError('Get frame info failed')
+            raise RuntimeError("Get frame info failed")
         return result[:pos], result[pos + 1:]
 
     def get_element(self, elem_xpaths):
-        '''获取控件，如果控件不存在抛出ControlNotFoundError
+        """获取控件，如果控件不存在抛出ControlNotFoundError
 
         :param elem_xpaths: 元素xpath路径
         :type elem_xpaths:  list
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
-        js = '''qt4w_driver_lib.selectNode('%s');''' % elem_xpath
-        try:
-            return self.eval_script(frame_xpaths, js)
-        except ControlNotFoundError as e:
-            logger.exception(self._get_dom_tree(frame_xpaths))
-            err_msg = e.message
-            raise ControlNotFoundError(err_msg)
+        js = """qt4w_driver_lib.selectNode('%s');""" % elem_xpath
+        return self.eval_script(frame_xpaths, js)
 
     def get_element_count(self, elem_xpaths):
-        '''获取满足elem_xpaths的元素个数
+        """获取满足elem_xpaths的元素个数
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
-        js = '''qt4w_driver_lib.selectNodes('%s').length;''' % elem_xpath
+        js = """qt4w_driver_lib.selectNodes('%s').length;""" % elem_xpath
         return int(self.eval_script(frame_xpaths, js))
 
     def get_attribute(self, elem_xpaths, attr_name):
-        '''获取元素属性
+        """获取元素属性
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param attr_name:   属性名
         :type attr_name:    string
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
-        js = '''
+        js = """
             var node = qt4w_driver_lib.selectNode('%s');
             node.getAttribute('%s');
-        ''' % (elem_xpath, attr_name)
+        """ % (
+            elem_xpath,
+            attr_name,
+        )
         result = self.eval_script(frame_xpaths, js)
-        if result == 'undefined':
+        if result == "undefined":
             result = None
         return result
 
     def set_attribute(self, elem_xpaths, attr_name, value):
-        '''设置元素属性
+        """设置元素属性
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
@@ -485,71 +478,80 @@ class WebDriverBase(IWebDriver):
         :type attr_name:    string
         :param value:       新的值
         :type value:        string
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
         if type(value) == str:
             value = self._my_encode(value)
-            value = '\'' + value + '\''
-        js = '''
+            value = "'" + value + "'"
+        js = """
             qt4w_driver_lib.node = qt4w_driver_lib.selectNodes('%s')[0];
             if(qt4w_driver_lib.node == undefined) throw('find %s failed');
             qt4w_driver_lib.result = qt4w_driver_lib.node.setAttribute('%s', %s);
-        ''' % (elem_xpath, elem_xpath, attr_name, value)
+        """ % (
+            elem_xpath,
+            elem_xpath,
+            attr_name,
+            value,
+        )
         return self.eval_script(frame_xpaths, js)
 
     def get_elem_rect(self, elem_xpaths, rav=True):
-        '''获取元素在页面中的坐标
+        """获取元素在页面中的坐标
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param rav:         是否是相对于当前frame
         :type rav:          bool
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
         result = self._get_elem_rect(frame_xpaths, elem_xpath)
         if not rav and frame_xpaths:
             while frame_xpaths:
-                result1 = self._get_elem_rect(
-                    frame_xpaths[:-1], frame_xpaths[-1])
+                result1 = self._get_elem_rect(frame_xpaths[:-1], frame_xpaths[-1])
                 for i in range(2):
                     result[i] += result1[i]
                 frame_xpaths = frame_xpaths[:-1]
         return result
 
     def _get_elem_rect(self, frame_xpaths, elem_xpath):
-        '''获取元素在当前frame中的相对坐标
-        '''
-        js = '''
+        """获取元素在当前frame中的相对坐标"""
+        js = (
+            """
             var node = qt4w_driver_lib.selectNode('%s');
             qt4w_driver_lib.result = qt4w_driver_lib.getElemRect(node);
-        ''' % elem_xpath
+        """
+            % elem_xpath
+        )
         result = self.eval_script(frame_xpaths, js)
-        result = result.replace('"', '')
-        result = result.split(',')
+        result = result.replace('"', "")
+        result = result.split(",")
         for i in range(len(result)):
             result[i] = float(result[i])
         return result
 
     def get_property(self, elem_xpaths, prop_name):
-        '''获取元素的特定值，例如：node.innerHTML
+        """获取元素的特定值，例如：node.innerHTML
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param prop_name:   property名
         :type prop_name:    string
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
-        js = '''
+        js = """
             var node = qt4w_driver_lib.selectNode('%s');
             node.%s;
-        ''' % (elem_xpath, prop_name)
+        """ % (
+            elem_xpath,
+            prop_name,
+        )
         return self.eval_script(frame_xpaths, js)
 
     def set_property(self, elem_xpaths, prop_name, value):
-        '''设置元素的特定值，例如：node.innerHTML
+        """设置元素的特定值，例如：node.innerHTML
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
@@ -557,74 +559,89 @@ class WebDriverBase(IWebDriver):
         :type prop_name:    string
         :param value:       新的值
         :type value:        string
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
         if value is None:
-            value = ''
+            value = ""
         if type(value) == str:
             value = self._my_encode(value)
-            value = '\'' + value + '\''
-        js = '''
+            value = "'" + value + "'"
+        js = """
             var node = qt4w_driver_lib.selectNode('%s');
             node.%s = %s;
-        ''' % (elem_xpath, prop_name, value)
+        """ % (
+            elem_xpath,
+            prop_name,
+            value,
+        )
         return self.eval_script(frame_xpaths, js)
 
     def get_style(self, elem_xpaths, style_name):
-        '''获取元素的某一样式值
+        """获取元素的某一样式值
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param style_name:  样式名称
         :type style_name:   string
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
-        js = r'''
+        js = r"""
             var node = qt4w_driver_lib.selectNode('%s');
             window.getComputedStyle(node, null).getPropertyValue('%s');
-        ''' % (elem_xpath, style_name)
+        """ % (
+            elem_xpath,
+            style_name,
+        )
         return self.eval_script(frame_xpaths, js)
 
     def is_elem_focused(self, elem_xpaths):
-        '''是否是当前有焦点元素
+        """是否是当前有焦点元素
 
         :param elem_xpaths:
         :type elem_xpaths:
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
-        js = r'''
+        js = r"""
             var node = qt4w_driver_lib.selectNode('%s');
             document.activeElement == node;
-        ''' % (elem_xpath)
-        return 'true' in self.eval_script(frame_xpaths, js)
+        """ % (
+            elem_xpath
+        )
+        return "true" in self.eval_script(frame_xpaths, js)
 
     def scroll_to_visible(self, elem_xpaths):
-        '''将元素滚动到可见区域
+        """将元素滚动到可见区域
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
-        js = r'''qt4w_driver_lib.scrollToVisible(qt4w_driver_lib.selectNode('%s'));''' % elem_xpath
+        js = (
+            r"""qt4w_driver_lib.scrollToVisible(qt4w_driver_lib.selectNode('%s'));"""
+            % elem_xpath
+        )
         self.eval_script(frame_xpaths, js)
 
     def highlight(self, elem_xpaths):
-        '''使元素高亮
+        """使元素高亮
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
-        '''
+        """
         self.scroll_to_visible(elem_xpaths)
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
-        js = '''qt4w_driver_lib.highlight(qt4w_driver_lib.selectNode('%s'));''' % elem_xpath
+        js = (
+            """qt4w_driver_lib.highlight(qt4w_driver_lib.selectNode('%s'));"""
+            % elem_xpath
+        )
         self.eval_script(frame_xpaths, js)
         return True
 
     def drag_element(self, elem_xpaths, from_x, from_y, to_x, to_y):
-        '''拖拽元素
+        """拖拽元素
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
@@ -636,11 +653,11 @@ class WebDriverBase(IWebDriver):
         :type to_x:         int/float
         :param to_y:        终点纵坐标，相对于WebView左上角
         :type to_y:         int/float
-        '''
+        """
         self.scroll_to_visible(elem_xpaths)
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
-        js = '''
+        js = """
 window['qt4w_driver_lib']['createTouch'] = function(element, point, id) {
     if (document.createTouch)
         return document.createTouch(window, element, id, point.x, point.y, point.x, point.y);
@@ -698,42 +715,51 @@ window['qt4w_driver_lib']['fireDragEvent'] = function(element, x1, y1, x2, y2){
 };
 
 qt4w_driver_lib.fireDragEvent(qt4w_driver_lib.selectNode('%s'), %s, %s, %s, %s);
-        ''' % (elem_xpath, from_x, from_y, to_x, to_y)
+        """ % (
+            elem_xpath,
+            from_x,
+            from_y,
+            to_x,
+            to_y,
+        )
         self.eval_script(frame_xpaths, js)
 
     def fire_event(self, elem_xpaths, type):
-        '''触发事件
+        """触发事件
 
         :param elem_xpaths: 要触发事件的元素XPATH路径
         :type  elem_xpaths: list
         :param type:        事件类型
         :type  type:        string
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
-        js = '''
+        js = """
 var node = qt4w_driver_lib.selectNode('%s');
 var evt = document.createEvent("Events");
 evt.initEvent('%s', true, false);
 node.dispatchEvent(evt);
-        ''' % (elem_xpath, type)
+        """ % (
+            elem_xpath,
+            type,
+        )
         self.eval_script(frame_xpaths, js)
 
     def read_console_log(self, frame_xpaths, count=1):
-        '''读取指定条数的日志
+        """读取指定条数的日志
 
         :param frame_xpaths: 当前页面的XPATH路径
         :type  frame_xpaths: list
         :param count:        要读取的日志条数，默认为1
         :type  count:        int
         :return:             读取到的日志
-        '''
-        js = '''JSON.stringify(qt4w_driver_lib.readLogData(%d));''' % count
+        """
+        js = """JSON.stringify(qt4w_driver_lib.readLogData(%d));""" % count
         result = json.loads(self.eval_script(frame_xpaths, js))
         if count == 1 and len(result) == 1:
             return result[0]
         return result
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

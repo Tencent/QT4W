@@ -13,18 +13,19 @@
 # governing permissions and limitations under the License.
 #
 
-'''Webkit WebDrvier实现
-'''
-
+"""Webkit WebDrvier实现
+"""
 
 from __future__ import absolute_import
 from qt4w.webdriver.webdriver import WebDriverBase
 
-class WebkitWebDriver(WebDriverBase):
-    '''Webkit WebDrvier
-    '''
 
-    driver_script = WebDriverBase.driver_script + r'''
+class WebkitWebDriver(WebDriverBase):
+    """Webkit WebDrvier"""
+
+    driver_script = (
+        WebDriverBase.driver_script
+        + r"""
     window.Notification = undefined; // disable Notification
     window['qt4w_driver_lib']['getScale'] = function(){return window.devicePixelRatio;};
     window['qt4w_driver_lib']['getElemRect'] = function(node) {
@@ -58,4 +59,5 @@ class WebkitWebDriver(WebDriverBase):
         return result.toString();
     }
     document.addEventListener('click', function(event){console.log('[ClickListener](' + event.clientX + ', ' + event.clientY + ')');}, true);
-    '''
+    """
+    )

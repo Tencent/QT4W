@@ -12,9 +12,8 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-'''IE的WebDriver实现
-'''
-
+"""IE的WebDriver实现
+"""
 
 from __future__ import absolute_import
 import time
@@ -22,7 +21,7 @@ from qt4w.webdriver.webdriver import WebDriverBase
 
 # http://sourceforge.net/projects/html-xpath 有bug
 # http://llamalab.com/js/xpath/
-ie_xpath_script = r'''
+ie_xpath_script = r"""
 (function(){var ca=void(0);var da={targetFrame:ca,exportInstaller:false,useNative:true,useInnerText:true};var ea;if(window.jsxpath){ea=window.jsxpath;}
 else{var fa=document.getElementsByTagName('script');var ga=fa[fa.length-1];var ha=ga.src;ea={};var ia=ha.match(/\?(.*)$/);if(ia){var ja=ia[1].split('&');for(var i=0,l=ja.length;i<l;i++){var ka=ja[i];var la=ka.split('=');var ma=la[0];var na=la[1];if(na==ca){na==true;}
 else if(na=='false'||/^-?\d+$/.test(na)){na=eval(na);}
@@ -311,10 +310,11 @@ this.expr=oa.parse(gg);if(!gg.empty()){throw dg.Error('bad token: '+gg.next());}
 this.resultType=kg;switch(kg){case 1:this.numberValue=jg.isNodeSet?jg.number():+jg;return;case 2:this.stringValue=jg.isNodeSet?jg.string():''+jg;return;case 3:this.booleanValue=jg.isNodeSet?jg.bool():!!jg;return;case 4:case 5:case 6:case 7:this.nodes=jg.list();this.snapshotLength=jg.length;this.index=0;this.invalidIteratorState=false;break;case 8:case 9:this.singleNodeValue=jg.first();return;}};dg.XPathResult.prototype.iterateNext=function(){return this.nodes[this.index++]};dg.XPathResult.prototype.snapshotItem=function(i){return this.nodes[i]};dg.XPathResult.ANY_TYPE=0;dg.XPathResult.NUMBER_TYPE=1;dg.XPathResult.STRING_TYPE=2;dg.XPathResult.BOOLEAN_TYPE=3;dg.XPathResult.UNORDERED_NODE_ITERATOR_TYPE=4;dg.XPathResult.ORDERED_NODE_ITERATOR_TYPE=5;dg.XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE=6;dg.XPathResult.ORDERED_NODE_SNAPSHOT_TYPE=7;dg.XPathResult.ANY_UNORDERED_NODE_TYPE=8;dg.XPathResult.FIRST_ORDERED_NODE_TYPE=9;eg.createExpression=function(lg){return new dg.XPathExpression(lg,null);};eg.evaluate=function(mg,ng,_,og){return eg.createExpression(mg,null).evaluate(ng,og);};};var pg;if(ea.targetFrame){var qg=document.getElementById(ea.targetFrame);if(qg)pg=qg.contentWindow;}
 if(ea.exportInstaller){window.install=cg;}
 if(!ea.hasNative||!ea.useNative){cg(pg||window);}})();
-'''
+"""
 
 # https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js
-json_script = r'''/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
+json_script = r"""
+/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
 (function(){function N(p,r){function q(a){if(q[a]!==w)return q[a];var c;if("bug-string-char-index"==a)c="a"!="a"[0];else if("json"==a)c=q("json-stringify")&&q("json-parse");else{var e;if("json-stringify"==a){c=r.stringify;var b="function"==typeof c&&s;if(b){(e=function(){return 1}).toJSON=e;try{b="0"===c(0)&&"0"===c(new t)&&'""'==c(new A)&&c(u)===w&&c(w)===w&&c()===w&&"1"===c(e)&&"[1]"==c([e])&&"[null]"==c([w])&&"null"==c(null)&&"[null,null,null]"==c([w,u,null])&&'{"a":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}'==
 c({a:[e,!0,!1,null,"\x00\b\n\f\r\t"]})&&"1"===c(null,e)&&"[\n 1,\n 2\n]"==c([1,2],null,1)&&'"-271821-04-20T00:00:00.000Z"'==c(new C(-864E13))&&'"+275760-09-13T00:00:00.000Z"'==c(new C(864E13))&&'"-000001-01-01T00:00:00.000Z"'==c(new C(-621987552E5))&&'"1969-12-31T23:59:59.999Z"'==c(new C(-1))}catch(f){b=!1}}c=b}if("json-parse"==a){c=r.parse;if("function"==typeof c)try{if(0===c("0")&&!c(!1)){e=c('{"a":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}');var n=5==e.a.length&&1===e.a[0];if(n){try{n=!c('"\t"')}catch(d){}if(n)try{n=
 1!==c("01")}catch(g){}if(n)try{n=1!==c("1.")}catch(m){}}}}catch(X){n=!1}c=n}}return q[a]=!!c}p||(p=k.Object());r||(r=k.Object());var t=p.Number||k.Number,A=p.String||k.String,H=p.Object||k.Object,C=p.Date||k.Date,G=p.SyntaxError||k.SyntaxError,K=p.TypeError||k.TypeError,L=p.Math||k.Math,I=p.JSON||k.JSON;"object"==typeof I&&I&&(r.stringify=I.stringify,r.parse=I.parse);var H=H.prototype,u=H.toString,v,B,w,s=new C(-0xc782b5b800cec);try{s=-109252==s.getUTCFullYear()&&0===s.getUTCMonth()&&1===s.getUTCDate()&&
@@ -331,13 +331,15 @@ b;45==d&&(k=!0,d=a.charCodeAt(++b));if(48<=d&&57>=d){for(48==d&&(d=a.charCodeAt(
 b+4))return b+=4,null;l()}return"$"},P=function(a){var c,b;"$"==a&&l();if("string"==typeof a){if("@"==(D?a.charAt(0):a[0]))return a.slice(1);if("["==a){for(c=[];;b||(b=!0)){a=z();if("]"==a)break;b&&(","==a?(a=z(),"]"==a&&l()):l());","==a&&l();c.push(P(a))}return c}if("{"==a){for(c={};;b||(b=!0)){a=z();if("}"==a)break;b&&(","==a?(a=z(),"}"==a&&l()):l());","!=a&&"string"==typeof a&&"@"==(D?a.charAt(0):a[0])&&":"==z()||l();c[a.slice(1)]=P(z())}return c}l()}return a},T=function(a,b,e){e=S(a,b,e);e===
 w?delete a[b]:a[b]=e},S=function(a,b,e){var h=a[b],f;if("object"==typeof h&&h)if("[object Array]"==u.call(h))for(f=h.length;f--;)T(h,f,e);else B(h,function(a){T(h,a,e)});return e.call(a,b,h)};r.parse=function(a,c){var e,h;b=0;J=""+a;e=P(z());"$"!=z()&&l();b=J=null;return c&&"[object Function]"==u.call(c)?S((h={},h[""]=e,h),"",c):e}}}r.runInContext=N;return r}var K=typeof define==="function"&&define.amd,F={"function":!0,object:!0},G=F[typeof exports]&&exports&&!exports.nodeType&&exports,k=F[typeof window]&&
 window||this,t=G&&F[typeof module]&&module&&!module.nodeType&&"object"==typeof global&&global;!t||t.global!==t&&t.window!==t&&t.self!==t||(k=t);if(G&&!K)N(k,G);else{var L=k.JSON,Q=k.JSON3,M=!1,A=N(k,k.JSON3={noConflict:function(){M||(M=!0,k.JSON=L,k.JSON3=Q,L=Q=null);return A}});k.JSON={parse:A.parse,stringify:A.stringify}}K&&define(function(){return A})}).call(this);
-'''
+"""
 
 
 class IEWebDriver(WebDriverBase):
-    '''IE的WebDriver实现
-    '''
-    driver_script = json_script + r'''
+    """IE的WebDriver实现"""
+
+    driver_script = (
+        json_script
+        + r"""
     if ( !window.Element || !Element.prototype || !(document.documentElement instanceof Element)) {
         var __Element = window.Element;
         var __prototype = window.Element ? Element.prototype : null;
@@ -347,6 +349,53 @@ class IEWebDriver(WebDriverBase):
             for(var key in __Element)
                 Element.prototype[key] = __Element[key];
         }
+
+        var hookSetAttribute = function (element) {
+            if (element.__setAttribute) return;
+            element.__setAttribute = element.setAttribute;
+            element.setAttribute = function (attr, value) {
+                if (attr == 'style') {
+                    var absolute = false;
+                    var items = value.split(';');
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var pos = item.indexOf(':');
+                        if (pos > 0) {
+                            var name = item.substring(0, pos).trim();
+                            var val = item.substring(pos + 1).trim();
+                            if (name == 'position' && val == 'fixed') {
+                                this.style['position'] = 'absolute';
+                                absolute = true;
+                            } else {
+                                this.style[name] = val;
+                            }
+                        }
+                    }
+                    if (absolute) {
+                        // fix left/top/right/bottom
+                        var items = ['left', 'top'];
+                        for (var i in items) {
+                            var item = items[i];
+                            var val = this.style[item];
+                            if (val) {
+                                val = parseInt(val);
+                                if (item == 'left') {
+                                    val += document.body.scrollLeft;
+                                } else {
+                                    val += document.body.scrollTop;
+                                }
+                                val = val + 'px';
+                                this.style[item] = val;
+                            }
+                        }
+                        this.style.lineHeight = '0px'; // 最小行高设为0
+                    }
+                    return;
+                }
+                return this.__setAttribute(attr, value);
+            }
+        }
+
         var _hookElement = function (element) {
             if (!element) return;
             if (!element.hooked) {
@@ -356,6 +405,14 @@ class IEWebDriver(WebDriverBase):
                         element[key] = Element.prototype[key];
                     }catch(e){
                         console.warn(element.outerHTML + ':' + key + ':' + e.message);
+                    }
+                }
+                if (document.documentMode < 8) {
+                    // IE8以下版本不支持设置style属性
+                    try {
+                        hookSetAttribute(element);
+                    } catch (e) {
+                        console.warn('Hook element ' + element + ' setAttribute failed:' + e.message);
                     }
                 }
                 element.hooked = true;
@@ -382,9 +439,7 @@ class IEWebDriver(WebDriverBase):
             document.createElement = function (tagName) {
                 console.log('create element ' + tagName);
                 var element = document.__createElement(tagName);
-                for(var key in Element.prototype)
-                    element[key] = Element.prototype[key];
-                element.hooked = true;
+                _hookElement(element);
                 return element;
             }
         }
@@ -409,6 +464,7 @@ class IEWebDriver(WebDriverBase):
             this.scrollIntoView();
         }
     }
+
     if (!Element.prototype.dispatchEvent) {
         Element.prototype.dispatchEvent = function (event) {
             if (event.type == 'input') {
@@ -417,6 +473,12 @@ class IEWebDriver(WebDriverBase):
             }
             event.srcElement = event.target = this;
             this.fireEvent('on' + event.type, event);
+        }
+    }
+
+    if(typeof String.prototype.trim !== 'function') {
+        String.prototype.trim = function() {
+            return this.replace(/^\s+|\s+$/g, ''); 
         }
     }
 
@@ -467,69 +529,80 @@ class IEWebDriver(WebDriverBase):
             return evt;
         }
     }
-    '''
-    driver_script += WebDriverBase.driver_script + r'''
+    """
+    )
+    driver_script += (
+        WebDriverBase.driver_script
+        + r"""
     window['qt4w_driver_lib']['getScale'] = function(){return screen.deviceXDPI / screen.logicalXDPI;};
     window['qt4w_driver_lib']['getElementZoom'] = function(node){
         return 1;
     };
-    '''
+    """
+    )
 
     def _wait_for_ready(self, frame_xpaths, timeout=30):
-        '''页面未加载完成时注入js可能会导致“拒绝访问”异常
-        '''
+        """页面未加载完成时注入js可能会导致“拒绝访问”异常"""
         time0 = time.time()
         while time.time() - time0 < timeout:
             ready_state = self.get_ready_state(frame_xpaths)
-            if ready_state != 'loading': return
+            if ready_state != "loading":
+                return
             time.sleep(0.5)
 
     def eval_script(self, frame_xpaths, script):
-        '''在指定frame中执行JavaScript，并返回执行结果
+        """在指定frame中执行JavaScript，并返回执行结果
 
         :param frame_xpaths: frame元素的XPATH路径，如果是顶层页面，怎传入“[]”
         :type frame_xpaths:  list
         :param script:       要执行的JavaScript语句
         :type script:        string
-        '''
+        """
         from qt4w.util import JavaScriptError
+
         try:
             return super(IEWebDriver, self).eval_script(frame_xpaths, script)
         except JavaScriptError as e:
             err_msg = e.message
-            err_msg = err_msg.split('\n')[0]  # 错误堆栈信息可能会有影响
-            if ('TypeError' in err_msg or 'ReferenceError' in err_msg) and ('evaluate' in err_msg or 'XPathResult' in err_msg):
+            err_msg = err_msg.split("\n")[0]  # 错误堆栈信息可能会有影响
+            if ("TypeError" in err_msg or "ReferenceError" in err_msg) and (
+                "evaluate" in err_msg or "XPathResult" in err_msg
+            ):
                 # 注入xpath库
                 self._wait_for_ready(e.frame)
                 self._webview.eval_script(e.frame, ie_xpath_script, False)
                 return self.eval_script(e.frame, script)
-#             elif '拒绝访问' in err_msg:
-#                 # 执行highlight操作时有时会有此错误
-#                 time.sleep(0.1)
-#                 return self.eval_script(e.frame, script)
+            #             elif '拒绝访问' in err_msg:
+            #                 # 执行highlight操作时有时会有此错误
+            #                 time.sleep(0.1)
+            #                 return self.eval_script(e.frame, script)
             else:
                 raise e
 
     def get_style(self, elem_xpaths, style_name):
-        '''获取元素的某一样式值
+        """获取元素的某一样式值
 
         :param elem_xpaths: 元素的XPATH路径
         :type elem_xpaths:  list
         :param style_name:  样式名称
         :type style_name:   string
-        '''
+        """
         frame_xpaths, elem_xpath = self._break_xpaths(elem_xpaths)
 
-        js = r'''
+        js = r"""
             var node = qt4w_driver_lib.selectNode('%s');
             if(window.getComputedStyle != undefined){
                 window.getComputedStyle(node, null).getPropertyValue('%s');
             }else{
                 node.currentStyle.getAttribute('%s');
             }
-        ''' % (elem_xpath, style_name, style_name)
+        """ % (
+            elem_xpath,
+            style_name,
+            style_name,
+        )
         return self.eval_script(frame_xpaths, js)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

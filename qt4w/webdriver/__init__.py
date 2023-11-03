@@ -12,13 +12,12 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-'''IWebDriver接口定义及Windows上的实现
-'''
+"""IWebDriver接口定义及Windows上的实现
+"""
 
 
 class EnumWebDriverType(object):
-    '''WebDriver类型（浏览器内核）
-    '''
+    """WebDriver类型（浏览器内核）"""
+
     IE = 1
     WEBKIT = 2
-

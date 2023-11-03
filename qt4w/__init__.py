@@ -12,13 +12,13 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-'''Web自动化测试基础库
-'''
-
+"""Web自动化测试基础库
+"""
 
 
 class XPath(str):
-    '''表示XPath'''
+    """表示XPath"""
+
     def __init__(self, obj):
         str.__init__(self)
         self._obj = obj
@@ -66,9 +66,9 @@ class XPath(str):
         if p2 < 0:
             p2 = len(self._censor().strip("/"))
         nodetest = self._censor().strip("/")[p1:p2]
-        if nodetest[0] == '/':
+        if nodetest[0] == "/":
             nodetest = nodetest[1:]
-        if nodetest[-1] == ')':
+        if nodetest[-1] == ")":
             nodetest = nodetest[:-1]
         return nodetest
 
@@ -125,17 +125,18 @@ class XPath(str):
                 p3 = ret.find("'", p1 + 1)
                 if p3 < 0:
                     break
-                ret = ret[:p1 + 1] + '"' * (p3 - p1 - 1) + ret[p3:]
+                ret = ret[: p1 + 1] + '"' * (p3 - p1 - 1) + ret[p3:]
             elif p1 < 0 or 0 <= p2 < p1:
                 p3 = ret.find('"', p2 + 1)
                 if p3 < 0:
                     break
-                ret = ret[:p2 + 1] + "'" * (p3 - p2 - 1) + ret[p3:]
+                ret = ret[: p2 + 1] + "'" * (p3 - p2 - 1) + ret[p3:]
         self._censored = ret
         return ret
 
+
 def set_logger(logger):
-    '''set qt4w default logger
-    '''
+    """set qt4w default logger"""
     import qt4w.util
+
     util.logger = logger

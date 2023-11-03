@@ -15,7 +15,6 @@
 """WebPage、WebElement接口类
 """
 
-
 from __future__ import absolute_import, division
 import copy
 import re
@@ -32,6 +31,7 @@ from .util import (
     WebElementAttributes,
     WebElementStyles,
     lazy_init,
+    logger,
     encode_wrap,
 )
 
@@ -99,7 +99,7 @@ class IWebPage(object):
         """释放占用的资源"""
         raise NotImplementedError
 
-    def wait_for_ready(self, timeout=60):
+    def wait_for_ready(self, timeout=60, raise_error=True):
         """等待页面状态变为ready
 
         :param timeout: 超时时间
@@ -203,6 +203,12 @@ class IWebPage(object):
 
     def screenshot(self):
         """获取page页面截图"""
+        raise NotImplementedError
+
+    def set_http_header(self, key, value):
+        """
+        设置http请求头
+        """
         raise NotImplementedError
 
 
@@ -541,7 +547,7 @@ class ControlContainer(object):
             return obj
 
         ret = list_pattern.match(name)
-        if ret != None:
+        if ret is not None:
             # 索引方式
             name = ret.group(1)
             index = int(ret.group(2))
@@ -821,7 +827,7 @@ class WebElement(ControlContainer, IWebElement):
         :paran elem_cls: 返回的元素类型
         :type elem_cls:  class
         """
-        if elem_cls == None:
+        if elem_cls is None:
             elem_cls = WebElement
         return elem_cls(self, locator)
 
@@ -1087,8 +1093,7 @@ class WebPage(ControlContainer, IWebPage):
                 self._webdriver = self._webview.webdriver_class(self._webview)
             except NotImplementedError:
                 self._webdriver = self._webview  # remove later
-        if wait_for_ready:
-            self.wait_for_ready()
+        self.wait_for_ready(raise_error=wait_for_ready)
 
     def __str__(self):
         return "<%s object at 0x%X [title=%s url=%s]>" % (
@@ -1138,13 +1143,16 @@ class WebPage(ControlContainer, IWebPage):
 
     def close(self):
         """关闭承载页面的窗口"""
-        self.exec_script("close()")
+        try:
+            self.exec_script("close()")
+        except RuntimeError as ex:
+            logger.debug("[%s] Close page error: %s" % (self.__class__.__name__, ex))
 
     def release(self):
         """释放占用的资源"""
         raise NotImplementedError
 
-    def wait_for_ready(self, timeout=60):
+    def wait_for_ready(self, timeout=60, raise_error=True):
         """等待页面状态变为ready
 
         :param timeout: 超时时间
@@ -1156,7 +1164,11 @@ class WebPage(ControlContainer, IWebPage):
                 return
             time.sleep(0.5)
         else:
-            raise RuntimeError("页面未在%d秒内加载完成" % timeout)
+            message = "页面未在%d秒内加载完成" % timeout
+            if raise_error:
+                raise RuntimeError(message)
+            else:
+                logger.warning("[%s] %s" % (self.__class__.__name__, message))
 
     def scroll(self, x, y):
         """滚动
@@ -1185,7 +1197,7 @@ class WebPage(ControlContainer, IWebPage):
         :paran elem_cls: 返回的元素类型
         :type elem_cls:  class
         """
-        if elem_cls == None:
+        if elem_cls is None:
             elem_cls = WebElement
         return elem_cls(self, locator)
 
@@ -1250,7 +1262,7 @@ class WebPage(ControlContainer, IWebPage):
         :type  timeout: int
         """
         time0 = time.time()
-        while timeout == None or time.time() - time0 < timeout:
+        while timeout is None or time.time() - time0 < timeout:
             result = self._webdriver.read_console_log(self._locator)
             if result:
                 return result
@@ -1264,6 +1276,16 @@ class WebPage(ControlContainer, IWebPage):
         :return: PIL.Image
         """
         return self._webview.screenshot()
+
+    def set_http_header(self, key, value):
+        """
+        设置http请求头
+        :param     key: 需要设置的请求头的key
+        :type      key: string
+        :param     value: 需要设置的请求头的value
+        :type      value: string
+        """
+        return self._webview.set_http_header(key, value)
 
 
 class FrameElement(WebElement):
@@ -1416,7 +1438,7 @@ class UIListBase(object):
                 child_elem = elem.control(control_name)
                 index = ""
                 ret = pattern.match(attr_name)
-                if ret != None:
+                if ret is not None:
                     attr_name = ret.group(1)
                     index = ret.group(2)[1:-1]
                 if not hasattr(child_elem, attr_name):
@@ -1454,7 +1476,7 @@ class MetisView(object):
     @property
     def rect(self):
         """元素相对坐标(x, y, w, h)"""
-        if self._elem == None:
+        if self._elem is None:
             rect = self._webview.rect
             return (0, 0, rect[2], rect[3])
         else:
@@ -1470,16 +1492,16 @@ class MetisView(object):
         :return: PIL.image
         """
         image = self._webview.screenshot()
-        if self._elem != None:
+        if self._elem is not None:
             left, top, width, height = self.rect
             image = image.crop((left, top, left + width, top + height))
         return image
 
     def _get_position(self, offset_x=None, offset_y=None):
         """"""
-        if offset_x == None:
+        if offset_x is None:
             offset_x = 0.5
-        if offset_y == None:
+        if offset_y is None:
             offset_y = 0.5
         rect = self.rect
         x = rect[0] + int(rect[2] * offset_x)

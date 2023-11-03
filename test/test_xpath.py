@@ -13,41 +13,43 @@
 # governing permissions and limitations under the License.
 #
 
-''' WebPage模块单元测试
-'''
+""" WebPage模块单元测试
+"""
 
 import unittest
 import mock
 from qt4w import XPath
 
-class TestXPath(unittest.TestCase):
 
+class TestXPath(unittest.TestCase):
     def test_node(self):
-        xp=XPath('//div[@id="google_shimpl"]')
+        xp = XPath('//div[@id="google_shimpl"]')
         self.assertEqual("div", xp.Nodetest)
         xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
         self.assertEqual("div", xp.Nodetest)
-
 
     def test_break_step(self):
         xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
-        steps=xp.break_steps()
+        steps = xp.break_steps()
         self.assertEqual('//div[@id="google_shimpl"]', steps[0])
         self.assertEqual('//div[text()="test"]', steps[1])
 
     def test_break_frame(self):
-         xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
-         steps = xp.break_frames()
-         self.assertEqual('//div[@id="google_shimpl"]//div[text()="test"]', steps[0])
-         xp = XPath('//iframe[@id="google_shimpl"]//div[text()="test"]')
-         steps = xp.break_frames()
-         self.assertEqual('//iframe[@id="google_shimpl"]', steps[0])
-         xp = XPath('(//iframe[@id="google_shimpl"])//div[text()="test"]')
-         steps = xp.break_frames()
-         self.assertEqual('(//iframe[@id="google_shimpl"])', steps[0])
-         xp = XPath('//frame[@id="main"]//iframe[@id="mainwindow"]//I[@class="spr nav1"]')
-         steps = xp.break_frames()
-         self.assertEqual('//frame[@id="main"]', steps[0])
+        xp = XPath('//div[@id="google_shimpl"]//div[text()="test"]')
+        steps = xp.break_frames()
+        self.assertEqual('//div[@id="google_shimpl"]//div[text()="test"]', steps[0])
+        xp = XPath('//iframe[@id="google_shimpl"]//div[text()="test"]')
+        steps = xp.break_frames()
+        self.assertEqual('//iframe[@id="google_shimpl"]', steps[0])
+        xp = XPath('(//iframe[@id="google_shimpl"])//div[text()="test"]')
+        steps = xp.break_frames()
+        self.assertEqual('(//iframe[@id="google_shimpl"])', steps[0])
+        xp = XPath(
+            '//frame[@id="main"]//iframe[@id="mainwindow"]//I[@class="spr nav1"]'
+        )
+        steps = xp.break_frames()
+        self.assertEqual('//frame[@id="main"]', steps[0])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
