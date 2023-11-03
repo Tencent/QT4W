@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function
 
+import collections
 import datetime
 import logging as logger
 import os
@@ -29,6 +30,11 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
+
+if not hasattr(collections, "MutableMapping"):
+    import collections.abc
+
+    collections.MutableMapping = collections.abc.MutableMapping
 
 import six
 import tornado.httpclient
@@ -793,7 +799,11 @@ class ProxyServer(object):
                     loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
 
-        app = tornado.web.Application([(r".*", ProxyRequestHandler),])
+        app = tornado.web.Application(
+            [
+                (r".*", ProxyRequestHandler),
+            ]
+        )
         app.listen(self._port, self._address)
         logger.info(
             "HTTP proxy server is listening on %s:%d" % (self._address, self._port)
