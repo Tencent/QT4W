@@ -241,10 +241,10 @@ class WebDriverBase(IWebDriver):
     },
 
     scrollToVisible: function(node){
-        if(node.scrollIntoViewIfNeeded){
-            node.scrollIntoViewIfNeeded();
-        }else if(node.scrollIntoView){
+        if(node.scrollIntoView){
             node.scrollIntoView();
+        }else if(node.scrollIntoViewIfNeeded){
+            node.scrollIntoViewIfNeeded();
         }
     },
 
