@@ -13,10 +13,11 @@
 # governing permissions and limitations under the License.
 #
 
-''' webdriver模块单元测试
-'''
+""" webdriver模块单元测试
+"""
 import unittest
 import mock
+
 
 class TestDriver(unittest.TestCase):
     pass

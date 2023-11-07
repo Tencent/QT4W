@@ -13,27 +13,37 @@
 # governing permissions and limitations under the License.
 #
 
-''' browser模块单元测试
-'''
-
+""" browser模块单元测试
+"""
 
 import unittest
 import mock
 from qt4w.browser.browser import Browser
 
+
 class TestBrowser(unittest.TestCase):
-
-
     def test_register_browser(self):
-        Browser.register_browser("testBrowser","test.util.FakeBrowser")
-        self.assertEqual(Browser.browser_dict["testBrowser"],"test.util.FakeBrowser")
+        Browser.register_browser("testBrowser", "test.util.FakeBrowser")
+        self.assertEqual(Browser.browser_dict["testBrowser"], "test.util.FakeBrowser")
 
     def test_openurl(self):
         Browser.register_browser("testBrowser", "test.util.FakeBrowser")
-        self.assertEqual("http://www.test.com", Browser().open_url("http://www.test.com"))
-        self.assertEqual("http://www.test.com", Browser("testBrowser").open_url("http://www.test.com"))
+        self.assertEqual(
+            "http://www.test.com", Browser().open_url("http://www.test.com")
+        )
+        self.assertEqual(
+            "http://www.test.com",
+            Browser("testBrowser").open_url("http://www.test.com"),
+        )
+        self.assertEqual(
+            "http://www.test.com",
+            Browser("testBrowser").open_url("http://www.test.com", extra_params=["--allow-outdated-plugins", "--kiosk"])
+        )
+        self.assertEqual(
+            "http://www.test.com",
+            Browser("testBrowser").open_url("http://www.test.com", extra_params="--allow-outdated-plugins --kiosk")
+        )
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

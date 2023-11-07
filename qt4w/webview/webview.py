@@ -12,69 +12,84 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-'''IWebView接口
-'''
+"""IWebView接口
+"""
+
+import time
+import logging
 
 
 class IWebView(object):
-    '''IWebView接口
-    '''
+    """IWebView接口"""
 
     @property
     def webdriver_class(self):
-        '''WebView对应的WebDriver类
-        '''
+        """WebView对应的WebDriver类"""
         raise NotImplementedError
 
     @property
     def rect(self):
-        '''WebView控件的坐标信息
-        '''
+        """WebView控件的坐标信息"""
         raise NotImplementedError
 
     @property
     def visible_rect(self):
-        '''WebView控件可见区域的坐标信息
-        '''
+        """WebView控件可见区域的坐标信息"""
         return self.rect
 
     def eval_script(self, frame_xpaths, script):
-        '''在指定frame中执行JavaScript，并返回执行结果
+        """在指定frame中执行JavaScript，并返回执行结果
 
         :param frame_xpaths: frame元素的XPATH路径，如果是顶层页面，则传入“[]”
         :type frame_xpaths:  list
         :param script:       要执行的JavaScript语句
         :type script:        string
-        '''
+        """
         raise NotImplementedError
 
     def screenshot(self):
-        '''当前WebView的截图
+        """当前WebView的截图
 
         :return: PIL.Image
-        '''
+        """
+        raise NotImplementedError
+
+    def start_record_screen(self):
+        """开始录屏"""
+        raise NotImplementedError
+
+    def stop_record_screen(self):
+        """结束录屏"""
+        raise NotImplementedError
+
+    def save_screen_video(self, save_path):
+        """保存录屏文件
+
+        :param save_path: 文件保存路径
+        :type  save_path: string
+        """
         raise NotImplementedError
 
     def click(self, x_offset, y_offset):
-        '''点击WebView中的某个坐标
+        """点击WebView中的某个坐标
 
         :param x_offset: 与WebView左上角的横向偏移量
         :type x_offset:  int/float
         :param y_offset: 与WebView左上角的纵向偏移量
         :type y_offset:  int/float
-        '''
+        """
         raise NotImplementedError
 
     def send_keys(self, text):
-        '''发送可见字符按键
+        """发送可见字符按键
 
         :param text: 要输入的文本
         :type  text: string
-        '''
+        """
         raise NotImplementedError
 
     def long_click(self, x_offset, y_offset, duration=1):
-        '''长按WebView中的某个坐标
+        """长按WebView中的某个坐标
 
         :param x_offset: 与WebView左上角的横向偏移量
         :type x_offset:  int/float
@@ -82,31 +97,31 @@ class IWebView(object):
         :type y_offset:  int/float
         :param duration: 按住的持续时间
         :type duration:  int/float
-        '''
+        """
         raise NotImplementedError
 
     def right_click(self, x_offset, y_offset):
-        '''右键点击WebView中的某个坐标
+        """右键点击WebView中的某个坐标
 
         :param x_offset: 与WebView左上角的横向偏移量
         :type x_offset:  int/float
         :param y_offset: 与WebView左上角的纵向偏移量
         :type y_offset:  int/float
-        '''
+        """
         raise NotImplementedError
 
     def double_click(self, x_offset, y_offset):
-        '''双击WebView中的某个坐标
+        """双击WebView中的某个坐标
 
         :param x_offset: 与WebView左上角的横向偏移量
         :type x_offset:  int/float
         :param y_offset: 与WebView左上角的纵向偏移量
         :type y_offset:  int/float
-        '''
+        """
         raise NotImplementedError
 
     def drag(self, x1, y1, x2, y2):
-        '''从(x1, y1)点拖动到(x2, y2)点
+        """从(x1, y1)点拖动到(x2, y2)点
 
         :param x1: 起点横坐标
         :type x1:  int/float
@@ -116,32 +131,41 @@ class IWebView(object):
         :type x2:  int/float
         :param y2: 终点纵坐标
         :type y2:  int/float
-        '''
+        """
         raise NotImplementedError
 
     def hover(self, x_offset, y_offset):
-        '''
+        """
 
         :param x_offset: 与WebView左上角的横向偏移量
         :type x_offset:  int/float
         :param y_offset: 与WebView左上角的纵向偏移量
         :type y_offset:  int/float
-        '''
+        """
         raise NotImplementedError
 
     def scroll(self, backward=True):
-        '''
+        """
 
         :param backward: 是否向后滚动，默认为True
         :type  backward: bool
-        '''
+        """
         raise NotImplementedError
 
     def upload_file(self, file_path):
-        '''上传文件
+        """上传文件
 
         :param file_path: 文件路径
         :type  file_path: str
-        '''
+        """
         raise NotImplementedError
 
+    def set_http_header(self, key, value):
+        """
+        设置http请求头信息
+        :param  key: 设置的请求头的key
+        :type   key: string
+        :param  value: 设置的请求头的value
+        :type   value: string
+        """
+        raise NotImplementedError
