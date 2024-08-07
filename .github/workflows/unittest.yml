@@ -55,22 +55,10 @@ jobs:
         run: |
           python -m pytest test/ --cov=qt4w --cov-report=xml
       - name: Upload coverage to Codecov
-        if: matrix.os == 'macos-12'
-        uses: codecov/codecov-action@v4
-        with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-            fail_ci_if_error: true
-            files: ./coverage.xml
-            flags: unittests
-            name: codecov-qt4w
-            path_to_write_report: ./coverage/codecov_report.txt
-            verbose: true
-      - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-20.04' || matrix.os == 'windows-2019'
         uses: codecov/codecov-action@v2
         with:
             token: ${{ secrets.CODECOV_TOKEN }}
-            fail_ci_if_error: true
+            fail_ci_if_error: false
             files: ./coverage.xml
             flags: unittests
             name: codecov-qt4w
